@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <StackPanel>
+            <Button Content="Выбрать папку" Click="SelectFolder_Click" Margin="10"/>
+            <ListBox Name="IconsListBox" Height="350" Margin="10"/>
+        </StackPanel>
     </Grid>
 </Window>
