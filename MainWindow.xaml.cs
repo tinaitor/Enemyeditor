@@ -15,6 +15,7 @@ namespace Enemyeditor
         public MainWindow()
         {
             InitializeComponent();
+            ClearSelectedStats();
         }
 
         private void SelectFolder_Click(object sender, RoutedEventArgs e)
@@ -63,7 +64,59 @@ namespace Enemyeditor
             {
                 enemyList.Remove(enemy);
                 RefreshEnemies();
+                ClearSelectedStats();
             }
+        }
+
+        private void EnemiesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (EnemiesListBox.SelectedItem is EnemyTemplate enemy)
+            {
+                SelectedNameText.Text = enemy.Name;
+                SelectedHealthText.Text = $"Здоровье: {enemy.Health}";
+                SelectedDamageText.Text = $"Урон: {enemy.Damage}";
+                SelectedSpeedText.Text = $"Скорость: {enemy.Speed}";
+
+                if (!string.IsNullOrEmpty(enemy.Icon.ImagePath))
+                {
+                    SelectedIconImage.Source = new BitmapImage(
+                        new Uri(enemy.Icon.ImagePath, UriKind.Absolute));
+                    OpenImageButton.IsEnabled = true;
+                }
+                else
+                {
+                    SelectedIconImage.Source = null;
+                    OpenImageButton.IsEnabled = false;
+                }
+            }
+            else
+            {
+                ClearSelectedStats();
+            }
+        }
+
+        private void OpenImage_Click(object sender, RoutedEventArgs e)
+        {
+            if (EnemiesListBox.SelectedItem is EnemyTemplate enemy &&
+                !string.IsNullOrEmpty(enemy.Icon.ImagePath))
+            {
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = enemy.Icon.ImagePath,
+                        UseShellExecute = true
+                    });
+            }
+        }
+
+        private void ClearSelectedStats()
+        {
+            SelectedNameText.Text = "";
+            SelectedHealthText.Text = "";
+            SelectedDamageText.Text = "";
+            SelectedSpeedText.Text = "";
+            SelectedIconImage.Source = null;
+            OpenImageButton.IsEnabled = false;
         }
 
         private void RefreshEnemies()
