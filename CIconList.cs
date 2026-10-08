@@ -14,9 +14,10 @@ namespace Enemyeditor
         {
             string filter = "*.png";
             string[] files = Directory.GetFiles(path, filter);
+            enemyIcons.Clear();
             foreach (string file in files)
             {
-                enemyIcons.Clear();
+                
                 enemyIcons.Add(new EnemyIcon
                 {
                     Name = System.IO.Path.GetFileName(file),
