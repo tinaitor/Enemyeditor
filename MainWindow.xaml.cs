@@ -31,10 +31,12 @@ namespace Enemyeditor
                 IconsListBox.Items.Clear();
                 foreach (EnemyIcon icon in iconList.GetIcons())
                 {
-                    Image image = new Image()
+                    Image image = new Image
                     {
-                        Source = new BitmapImage(new Uri(icon.ImagePath)),
+                    Source = new BitmapImage(new Uri(icon.ImagePath, UriKind.Absolute)),
+                        Width = 64,
                         Height = 64,
+                        Stretch = Stretch.Uniform
                     };
                     IconsListBox.Items.Add(image);
                 }
