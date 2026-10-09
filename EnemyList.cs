@@ -43,8 +43,8 @@ namespace Enemyeditor
 
             string json = File.ReadAllText(path);
 
-            // Сначала разбираем файл, и только после успешного разбора
-            // заменяем текущий список.
+             
+             
             List<EnemyTemplate> loaded =
                 JsonSerializer.Deserialize<List<EnemyTemplate>>(json)
                 ?? new List<EnemyTemplate>();
