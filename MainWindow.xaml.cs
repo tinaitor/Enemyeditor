@@ -68,6 +68,54 @@ namespace Enemyeditor
             }
         }
 
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Title = "Сохранить список противников",
+                Filter = "JSON-файлы (*.json)|*.json",
+                DefaultExt = ".json",
+                AddExtension = true,
+                FileName = "enemies.json"
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            try
+            {
+                enemyList.SaveToJson(dialog.FileName);
+                MessageBox.Show("Список противников сохранён.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось сохранить файл: {ex.Message}");
+            }
+        }
+
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Загрузить список противников",
+                Filter = "JSON-файлы (*.json)|*.json"
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            try
+            {
+                enemyList.LoadFromJson(dialog.FileName);
+                RefreshEnemies();
+                ClearSelectedStats();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось загрузить файл: {ex.Message}");
+            }
+        }
+
         private void EnemiesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (EnemiesListBox.SelectedItem is EnemyTemplate enemy)
