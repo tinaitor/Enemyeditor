@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enemyeditor", "Enemyeditor.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClickerGame", "..\WpfApp48\ClickerGame.csproj", "{00DF8556-F929-43B9-809A-D9D54ACD26C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClickerGame.Core", "ClickerGame.Core\ClickerGame.Core.csproj", "{058DCF21-C750-356C-D332-68FCC3EA2892}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{00DF8556-F929-43B9-809A-D9D54ACD26C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00DF8556-F929-43B9-809A-D9D54ACD26C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00DF8556-F929-43B9-809A-D9D54ACD26C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{058DCF21-C750-356C-D332-68FCC3EA2892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{058DCF21-C750-356C-D332-68FCC3EA2892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{058DCF21-C750-356C-D332-68FCC3EA2892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{058DCF21-C750-356C-D332-68FCC3EA2892}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
