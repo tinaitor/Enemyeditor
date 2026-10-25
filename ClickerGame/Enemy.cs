@@ -26,14 +26,18 @@
             if (IsDead) return false;
 
             
-            Health = Health - damage;
+            string hpStr = Health.ToString();
+            string dmgStr = damage.ToString();
 
             
-            if (Health.ToString().StartsWith("-") || Health.ToString() == "0")
+            if (hpStr.Length < dmgStr.Length || (hpStr.Length == dmgStr.Length && string.Compare(hpStr, dmgStr) <= 0))
             {
                 Health = BigNumber.FromLong(0);
                 return true;
             }
+
+            
+            Health = Health - damage;
             return false;
         }
     }

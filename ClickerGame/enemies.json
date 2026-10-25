@@ -2,45 +2,45 @@
   {
     "Name": "Первый враг",
     "Health": 10,
-    "Damage": 5,
-    "Speed": 1,
+    "Damage": 1,
+    "Speed": 10,
     "GoldReward": 15,
     "Icon": {
-      "Name": "skeleton_2.png",
-      "ImagePath": "icons/skeleton_2.png"
+      "Name": "skeleton_2",
+      "ImagePath": "icons/Monsters/skeleton_2.png"
     }
   },
   {
     "Name": "Второй враг",
     "Health": 20,
-    "Damage": 10,
-    "Speed": 2,
+    "Damage": 2,
+    "Speed": 20,
     "GoldReward": 35,
     "Icon": {
-      "Name": "skeleton_1.png",
-      "ImagePath": "icons/skeleton_1.png"
+      "Name": "skeleton_1",
+      "ImagePath": "icons/Monsters/skeleton_1.png"
     }
   },
   {
     "Name": "Третий враг",
     "Health": 30,
-    "Damage": 15,
-    "Speed": 3,
+    "Damage": 3,
+    "Speed": 30,
     "GoldReward": 55,
     "Icon": {
-      "Name": "goblin_7.png",
-      "ImagePath": "icons/goblin_7.png"
+      "Name": "goblin_7",
+      "ImagePath": "icons/Monsters/goblin_7.png"
     }
   },
-      {
-        "Name": "Четвертый враг",
-        "Health": 40,
-        "Damage": 20,
-        "Speed": 4,
-        "GoldReward": 75,
-        "Icon": {
-          "Name": "troll_1.png",
-          "ImagePath": "icons/troll_1.png"
-        }
-      }
+  {
+    "Name": "Четвертый враг",
+    "Health": 40,
+    "Damage": 4,
+    "Speed": 40,
+    "GoldReward": 75,
+    "Icon": {
+      "Name": "troll_1",
+      "ImagePath": "icons/Monsters/troll_1.png"
+    }
+  }
 ]

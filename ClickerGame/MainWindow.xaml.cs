@@ -9,7 +9,7 @@ namespace WpfApp48
     public partial class MainWindow : Window
     {
         private readonly EnemyRepository repository = new EnemyRepository();
-        private readonly Player player = new Player(BigNumber.FromLong(1)); 
+        private readonly Player player = new Player(BigNumber.FromLong(2)); 
         private Enemy? currentEnemy; 
 
         public MainWindow()
@@ -68,14 +68,29 @@ namespace WpfApp48
             GoldText.Text = "Золото: " + player.Gold.ToString();
             DamageText.Text = "Урон: " + player.Damage.ToString();
 
-            
+
             if (!string.IsNullOrEmpty(currentEnemy.ImagePath))
             {
-                
-                string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, currentEnemy.ImagePath);
-                if (File.Exists(fullPath))
+                string fixedPath = currentEnemy.ImagePath.Replace("/", "\\");
+                string fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fixedPath);
+
+               
+                if (System.IO.File.Exists(fullPath))
                 {
-                    EnemyImage.Source = new BitmapImage(new Uri(fullPath));
+                    try
+                    {
+                        BitmapImage bmp = new BitmapImage();
+                        bmp.BeginInit();
+                        bmp.UriSource = new Uri(fullPath, UriKind.Absolute);
+                        bmp.CacheOption = BitmapCacheOption.OnLoad; 
+                        bmp.EndInit();
+                        EnemyImage.Source = bmp;
+                    }
+                    catch (Exception ex)
+                    {
+                        
+                        MessageBox.Show("Ошибка загрузки картинки: " + ex.Message);
+                    }
                 }
             }
         }
