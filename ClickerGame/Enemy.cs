@@ -12,11 +12,11 @@
         public Enemy(EnemyTemplate template)
         {
             Name = template.Name;
-            // Берем здоровье из шаблона
+          
             MaxHealth = BigNumber.FromLong(template.Health);
             Health = MaxHealth;
-            // В качестве награды пока берем то же здоровье (или поменяй, если в JSON есть GoldReward)
-            Reward = BigNumber.FromLong(template.GoldReward);
+            
+            Reward = BigNumber.FromLong(template.Speed);
 
             ImagePath = template.Icon?.ImagePath;
         }
@@ -25,10 +25,10 @@
         {
             if (IsDead) return false;
 
-            // Используем правильный оператор вычитания из BigNumber!
+            
             Health = Health - damage;
 
-            // Проверяем, не ушло ли здоровье в минус
+            
             if (Health.ToString().StartsWith("-") || Health.ToString() == "0")
             {
                 Health = BigNumber.FromLong(0);

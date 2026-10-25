@@ -31,15 +31,15 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Левая часть: инфа о враге -->
+            <!--инфа о враге -->
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
                 <TextBlock x:Name="EnemyNameText" Text="Имя врага" FontSize="24" FontWeight="Bold"/>
                 <TextBlock x:Name="HealthText" Text="Здоровье: 0" FontSize="20" Margin="0,10,0,0"/>
             </StackPanel>
 
-            <!-- Правая часть: кнопка врага и статы игрока -->
+            <!--кнопка врага и статы игрока -->
             <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <!-- ВОТ ОНА, ТВОЯ КЛИКАБЕЛЬНАЯ ИКОНКА -->
+                
                 <Button x:Name="EnemyButton" Click="EnemyButton_Click" Width="200" Height="200" Background="Transparent" BorderThickness="0">
                     <Image x:Name="EnemyImage" Stretch="Uniform"/>
                 </Button>

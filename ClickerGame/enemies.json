@@ -6,8 +6,8 @@
     "Speed": 1,
     "GoldReward": 15,
     "Icon": {
-      "Name": "иконка1.png",
-      "ImagePath": "C:\\Users\\СНЕЖА\\source\\repos\\Enemyeditor\\icons\\Monsters\\skeleton_2.png"
+      "Name": "skeleton_2.png",
+      "ImagePath": "icons/skeleton_2.png"
     }
   },
   {
@@ -17,8 +17,8 @@
     "Speed": 2,
     "GoldReward": 35,
     "Icon": {
-      "Name": "иконка2.png",
-      "ImagePath": "C:\\Users\\СНЕЖА\\source\\repos\\Enemyeditor\\icons\\Monsters\\skeleton_1.png"
+      "Name": "skeleton_1.png",
+      "ImagePath": "icons/skeleton_1.png"
     }
   },
   {
@@ -28,8 +28,8 @@
     "Speed": 3,
     "GoldReward": 55,
     "Icon": {
-      "Name": "иконка2.png",
-      "ImagePath": "C:\\Users\\СНЕЖА\\source\\repos\\Enemyeditor\\icons\\Monsters\\goblin_7.png"
+      "Name": "goblin_7.png",
+      "ImagePath": "icons/goblin_7.png"
     }
   },
       {
@@ -39,8 +39,8 @@
         "Speed": 4,
         "GoldReward": 75,
         "Icon": {
-          "Name": "иконка2.png",
-          "ImagePath": "C:\\Users\\СНЕЖА\\source\\repos\\Enemyeditor\\icons\\Monsters\\troll_1.png"
+          "Name": "troll_1.png",
+          "ImagePath": "icons/troll_1.png"
         }
       }
 ]

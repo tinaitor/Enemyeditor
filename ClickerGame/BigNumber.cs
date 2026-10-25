@@ -52,7 +52,7 @@ namespace ClickerGame
             return new BigNumber(sb.ToString().TrimStart('0'));
         }
 
-        // Вычитание (поразрядно, с займом, как в методичке)
+        // Вычитание 
         public static BigNumber operator -(BigNumber a, BigNumber b)
         {
             int len = a.number.Length;
