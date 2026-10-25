@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "\u043F\u0438\u0442\u043E\u043C\u0435\u0446",
+    "Icon": {
+      "Name": "goblin_8.png",
+      "ImagePath": "C:\\Users\\\u0421\u041D\u0415\u0416\u0410\\source\\repos\\Enemyeditor\\icons\\Monsters\\goblin_8.png"
+    },
+    "Health": 23,
+    "Damage": 3,
+    "Speed": 4
+  },
+  {
+    "Name": "\u043A\u0430\u0442\u0443\u043D",
+    "Icon": {
+      "Name": "goblin_1.png",
+      "ImagePath": "C:\\Users\\\u0421\u041D\u0415\u0416\u0410\\source\\repos\\Enemyeditor\\icons\\Monsters\\goblin_1.png"
+    },
+    "Health": 22,
+    "Damage": 4,
+    "Speed": 3
+  }
+]
