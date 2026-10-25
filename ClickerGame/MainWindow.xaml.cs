@@ -12,8 +12,8 @@ namespace WpfApp48
             InitializeComponent();
             repository.LoadFromJson("enemies.json");
 
-            MessageBox.Show(
-                "Загружено противников: " + repository.GetTemplates().Count);
+            EnemiesListBox.ItemsSource = repository.GetTemplates();
+
         }
     }
 }
