@@ -6,6 +6,6 @@
         public EnemyIcon Icon { get; set; } = new EnemyIcon();
         public int Health { get; set; }
         public int Damage { get; set; }
-        public int Speed { get; set; }
+        public long GoldReward { get; set; }
     }
 }

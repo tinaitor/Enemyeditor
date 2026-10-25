@@ -3,7 +3,6 @@
     "Name": "Первый враг",
     "Health": 10,
     "Damage": 1,
-    "Speed": 10,
     "GoldReward": 15,
     "Icon": {
       "Name": "skeleton_2",
@@ -14,7 +13,6 @@
     "Name": "Второй враг",
     "Health": 20,
     "Damage": 2,
-    "Speed": 20,
     "GoldReward": 35,
     "Icon": {
       "Name": "skeleton_1",
@@ -25,7 +23,6 @@
     "Name": "Третий враг",
     "Health": 30,
     "Damage": 3,
-    "Speed": 30,
     "GoldReward": 55,
     "Icon": {
       "Name": "goblin_7",
@@ -36,7 +33,6 @@
     "Name": "Четвертый враг",
     "Health": 40,
     "Damage": 4,
-    "Speed": 40,
     "GoldReward": 75,
     "Icon": {
       "Name": "troll_1",

@@ -15,8 +15,8 @@
           
             MaxHealth = BigNumber.FromLong(template.Health);
             Health = MaxHealth;
-            
-            Reward = BigNumber.FromLong(template.Speed);
+
+            Reward = BigNumber.FromLong(template.GoldReward);
 
             ImagePath = template.Icon?.ImagePath;
         }
