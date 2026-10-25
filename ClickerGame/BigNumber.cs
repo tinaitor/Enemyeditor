@@ -32,6 +32,7 @@ namespace ClickerGame
             return sb.ToString();
         }
 
+        // Сложение
         public static BigNumber operator +(BigNumber a, BigNumber b)
         {
             int len = Math.Max(a.number.Length, b.number.Length);
@@ -44,10 +45,36 @@ namespace ClickerGame
                 carry = sum / Base;
             }
             if (carry > 0) res[len] = carry;
-            return new BigNumber(string.Join("", Array.ConvertAll(res, x => x.ToString()))); // Упрощенно для теста
+
+            // Собираем обратно в строку
+            StringBuilder sb = new StringBuilder();
+            for (int i = res.Length - 1; i >= 0; i--) sb.Append(res[i]);
+            return new BigNumber(sb.ToString().TrimStart('0'));
         }
 
-        // ВНИМАНИЕ: Это упрощенная версия для работы. 
-        // Для полноценной сдачи напарник должен добавить вычитание (-) и сравнение (>=), как в методичке.
+        // Вычитание (поразрядно, с займом, как в методичке)
+        public static BigNumber operator -(BigNumber a, BigNumber b)
+        {
+            int len = a.number.Length;
+            int[] res = new int[len];
+            int borrow = 0;
+            for (int i = 0; i < len; i++)
+            {
+                int sub = borrow + (i < b.number.Length ? b.number[i] : 0);
+                if (a.number[i] < sub)
+                {
+                    res[i] = a.number[i] + Base - sub;
+                    borrow = 1;
+                }
+                else
+                {
+                    res[i] = a.number[i] - sub;
+                    borrow = 0;
+                }
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = res.Length - 1; i >= 0; i--) sb.Append(res[i]);
+            return new BigNumber(sb.ToString().TrimStart('0'));
+        }
     }
 }

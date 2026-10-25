@@ -25,15 +25,16 @@
         {
             if (IsDead) return false;
 
-            // Вычитаем урон (упрощенно, для работы клика)
-            long currentHp = long.Parse(Health.ToString());
-            long dmg = long.Parse(damage.ToString());
-            long newHp = currentHp - dmg;
-            if (newHp < 0) newHp = 0;
+            // Используем правильный оператор вычитания из BigNumber!
+            Health = Health - damage;
 
-            Health = BigNumber.FromLong(newHp);
-
-            return Health.ToString() == "0"; // Возвращаем true, если умер
+            // Проверяем, не ушло ли здоровье в минус
+            if (Health.ToString().StartsWith("-") || Health.ToString() == "0")
+            {
+                Health = BigNumber.FromLong(0);
+                return true;
+            }
+            return false;
         }
     }
 }
