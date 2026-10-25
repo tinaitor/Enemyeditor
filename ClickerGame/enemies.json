@@ -1,22 +1,46 @@
 [
   {
-    "Name": "\u043F\u0438\u0442\u043E\u043C\u0435\u0446",
+    "Name": "Первый враг",
+    "Health": 10,
+    "Damage": 5,
+    "Speed": 1,
+    "GoldReward": 15,
     "Icon": {
-      "Name": "goblin_8.png",
-      "ImagePath": "C:\\Users\\\u0421\u041D\u0415\u0416\u0410\\source\\repos\\Enemyeditor\\icons\\Monsters\\goblin_8.png"
-    },
-    "Health": 23,
-    "Damage": 3,
-    "Speed": 4
+      "Name": "иконка1.png",
+      "ImagePath": "C:\\Users\\СНЕЖА\\source\\repos\\Enemyeditor\\icons\\Monsters\\skeleton_2.png"
+    }
   },
   {
-    "Name": "\u043A\u0430\u0442\u0443\u043D",
+    "Name": "Второй враг",
+    "Health": 20,
+    "Damage": 10,
+    "Speed": 2,
+    "GoldReward": 35,
     "Icon": {
-      "Name": "goblin_1.png",
-      "ImagePath": "C:\\Users\\\u0421\u041D\u0415\u0416\u0410\\source\\repos\\Enemyeditor\\icons\\Monsters\\goblin_1.png"
-    },
-    "Health": 22,
-    "Damage": 4,
-    "Speed": 3
-  }
+      "Name": "иконка2.png",
+      "ImagePath": "C:\\Users\\СНЕЖА\\source\\repos\\Enemyeditor\\icons\\Monsters\\skeleton_1.png"
+    }
+  },
+  {
+    "Name": "Третий враг",
+    "Health": 30,
+    "Damage": 15,
+    "Speed": 3,
+    "GoldReward": 55,
+    "Icon": {
+      "Name": "иконка2.png",
+      "ImagePath": "C:\\Users\\СНЕЖА\\source\\repos\\Enemyeditor\\icons\\Monsters\\goblin_7.png"
+    }
+  },
+      {
+        "Name": "Четвертый враг",
+        "Health": 40,
+        "Damage": 20,
+        "Speed": 4,
+        "GoldReward": 75,
+        "Icon": {
+          "Name": "иконка2.png",
+          "ImagePath": "C:\\Users\\СНЕЖА\\source\\repos\\Enemyeditor\\icons\\Monsters\\troll_1.png"
+        }
+      }
 ]
