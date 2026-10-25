@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ClickerGame
 {
-    class EnemyRepository
+    public class EnemyRepository
     {
         private List<EnemyTemplate> templates = new List<EnemyTemplate>();
 

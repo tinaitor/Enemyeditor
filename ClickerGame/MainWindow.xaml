@@ -7,6 +7,46 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid Margin="20">
+            <ListBox x:Name="EnemiesListBox">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Image Source="{Binding Icon.ImagePath}"
+                           Width="48" Height="48"
+                           Margin="0,0,10,0"/>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}"
+                                   FontSize="18"/>
+                                <TextBlock Text="{Binding Health, StringFormat=Здоровье: {0}}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
+            <!-- Левая часть: инфа о враге -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock x:Name="EnemyNameText" Text="Имя врага" FontSize="24" FontWeight="Bold"/>
+                <TextBlock x:Name="HealthText" Text="Здоровье: 0" FontSize="20" Margin="0,10,0,0"/>
+            </StackPanel>
+
+            <!-- Правая часть: кнопка врага и статы игрока -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!-- ВОТ ОНА, ТВОЯ КЛИКАБЕЛЬНАЯ ИКОНКА -->
+                <Button x:Name="EnemyButton" Click="EnemyButton_Click" Width="200" Height="200" Background="Transparent" BorderThickness="0">
+                    <Image x:Name="EnemyImage" Stretch="Uniform"/>
+                </Button>
+
+                <TextBlock x:Name="GoldText" Text="Золото: 0" FontSize="18" Margin="0,20,0,0" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="DamageText" Text="Урон: 1" FontSize="18" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
