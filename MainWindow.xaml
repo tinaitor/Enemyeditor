@@ -34,7 +34,7 @@
             <TextBlock Text="Урон:"/>
             <TextBox x:Name="DamageTextBox"/>
 
-            <TextBlock Text="Скорость:"/>
+            <TextBlock Text="Золото:"/>
             <TextBox x:Name="SpeedTextBox"/>
 
             <Button Content="Добавить противника"

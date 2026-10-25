@@ -16,8 +16,8 @@
             MaxHealth = BigNumber.FromLong(template.Health);
             Health = MaxHealth;
             // В качестве награды пока берем то же здоровье (или поменяй, если в JSON есть GoldReward)
-            Reward = BigNumber.FromLong(template.Health);
-            // Достаем путь к картинке
+            Reward = BigNumber.FromLong(template.GoldReward);
+
             ImagePath = template.Icon?.ImagePath;
         }
 
