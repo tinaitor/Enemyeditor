@@ -9,8 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="BackendTests/**/*.cs" />
-    <Compile Remove="ClickerGame.Core/**/*.cs" />
+    <Compile Remove="ClickerGame/**" />
+    <Page Remove="ClickerGame/**" />
+    <ApplicationDefinition Remove="ClickerGame/**" />
+    <None Remove="ClickerGame/**" />
+    <Compile Remove="ClickerGame.Core/**" />
+    <Compile Remove="BackendTests/**" />
   </ItemGroup>
 
 </Project>
