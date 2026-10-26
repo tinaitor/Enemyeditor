@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Linq;
 
 namespace ClickerGame
 {
@@ -10,7 +11,11 @@ namespace ClickerGame
 
         public BigNumber(string numberStr)
         {
-            if (string.IsNullOrEmpty(numberStr)) numberStr = "0";
+            if (string.IsNullOrEmpty(numberStr) || numberStr == "-") numberStr = "0";
+
+            
+            numberStr = numberStr.Replace("-", "");
+
             int len = (numberStr.Length + 2) / 3;
             number = new int[len];
             int pos = numberStr.Length;
@@ -20,19 +25,35 @@ namespace ClickerGame
                 number[i] = int.Parse(numberStr.Substring(start, pos - start));
                 pos -= 3;
             }
+            TrimLeadingZeros();
         }
 
         public static BigNumber FromLong(long value) => new BigNumber(value.ToString());
 
         public override string ToString()
         {
+            if (number == null || number.Length == 0) return "0";
+
             StringBuilder sb = new StringBuilder(number[number.Length - 1].ToString());
             for (int i = number.Length - 2; i >= 0; i--)
                 sb.Append(number[i].ToString("D3"));
             return sb.ToString();
         }
 
-        // Сложение
+        private void TrimLeadingZeros()
+        {
+            int lastNonZero = number.Length - 1;
+            while (lastNonZero > 0 && number[lastNonZero] == 0)
+                lastNonZero--;
+
+            if (lastNonZero < number.Length - 1)
+            {
+                int[] newNum = new int[lastNonZero + 1];
+                Array.Copy(number, newNum, newNum.Length);
+                number = newNum;
+            }
+        }
+
         public static BigNumber operator +(BigNumber a, BigNumber b)
         {
             int len = Math.Max(a.number.Length, b.number.Length);
@@ -44,15 +65,15 @@ namespace ClickerGame
                 res[i] = sum % Base;
                 carry = sum / Base;
             }
-            if (carry > 0) res[len] = carry;
+            res[len] = carry;
 
-            // Собираем обратно в строку
-            StringBuilder sb = new StringBuilder();
-            for (int i = res.Length - 1; i >= 0; i--) sb.Append(res[i]);
-            return new BigNumber(sb.ToString().TrimStart('0'));
+            BigNumber result = new BigNumber("0");
+            result.number = res;
+            result.TrimLeadingZeros();
+            return result;
         }
 
-        // Вычитание (поразрядно, с займом, как в методичке)
+        
         public static BigNumber operator -(BigNumber a, BigNumber b)
         {
             int len = a.number.Length;
@@ -72,9 +93,10 @@ namespace ClickerGame
                     borrow = 0;
                 }
             }
-            StringBuilder sb = new StringBuilder();
-            for (int i = res.Length - 1; i >= 0; i--) sb.Append(res[i]);
-            return new BigNumber(sb.ToString().TrimStart('0'));
+            BigNumber result = new BigNumber("0");
+            result.number = res;
+            result.TrimLeadingZeros();
+            return result;
         }
     }
 }

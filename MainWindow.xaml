@@ -8,7 +8,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Левая часть: иконки -->
+        <!--иконки -->
         <DockPanel Grid.Column="0" Margin="5">
             <Button DockPanel.Dock="Top"
                     Content="Выбрать папку с иконками"
@@ -23,7 +23,7 @@
             </ListBox>
         </DockPanel>
 
-        <!-- Правая часть: противники -->
+        <!--противники -->
         <StackPanel Grid.Column="1" Margin="5">
             <TextBlock Text="Имя:"/>
             <TextBox x:Name="NameTextBox"/>
