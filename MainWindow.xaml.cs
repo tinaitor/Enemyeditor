@@ -50,8 +50,8 @@ namespace Enemyeditor
                 Name = NameTextBox.Text,
                 Icon = icon,
                 Health = int.TryParse(HealthTextBox.Text, out int h) ? h : 0,
-                Damage = int.TryParse(DamageTextBox.Text, out int d) ? d : 0,
-                GoldReward = int.TryParse(SpeedTextBox.Text, out int s) ? s : 0
+                GoldReward = int.TryParse(SpeedTextBox.Text, out int s) ? s : 0,
+                SpawnChance = double.TryParse(SpawnChanceTextBox.Text, out double sc) && sc > 0 ? sc : 1.0
             };
 
             enemyList.Add(enemy);
@@ -122,7 +122,7 @@ namespace Enemyeditor
             {
                 SelectedNameText.Text = enemy.Name;
                 SelectedHealthText.Text = $"Здоровье: {enemy.Health}";
-                SelectedDamageText.Text = $"Урон: {enemy.Damage}";
+                SelectedSpawnChanceText.Text = $"Шанс: {enemy.SpawnChance}";
                 SelectedSpeedText.Text = $"Золото: {enemy.GoldReward}";
 
                 if (!string.IsNullOrEmpty(enemy.Icon.ImagePath))
@@ -161,7 +161,7 @@ namespace Enemyeditor
         {
             SelectedNameText.Text = "";
             SelectedHealthText.Text = "";
-            SelectedDamageText.Text = "";
+            SelectedSpawnChanceText.Text = "";
             SelectedSpeedText.Text = "";
             SelectedIconImage.Source = null;
             OpenImageButton.IsEnabled = false;
