@@ -1,32 +1,42 @@
 [
   {
-    "Name": "123",
+    "Name": "Первый враг",
+    "Health": 10,
+    "Damage": 1,
+    "GoldReward": 15,
     "Icon": {
-      "Name": "11.png",
-      "ImagePath": "C:\\va-11\\\u0411\u0443\u043B\u0449\u0438\u0442\\\u042D\u043A\u0441\u043F\u043E\u0440\u0442\\png \u0438 jpg\\7 \u043B\u0430\u0431\u0430\\11.png"
-    },
-    "Health": 16,
-    "SpawnChance": 4,
-    "GoldReward": 8
+      "Name": "skeleton_2",
+      "ImagePath": "icons/Monsters/skeleton_2.png"
+    }
   },
   {
-    "Name": "16",
+    "Name": "Второй враг",
+    "Health": 20,
+    "Damage": 2,
+    "GoldReward": 35,
     "Icon": {
-      "Name": "9.png",
-      "ImagePath": "C:\\va-11\\\u0411\u0443\u043B\u0449\u0438\u0442\\\u042D\u043A\u0441\u043F\u043E\u0440\u0442\\png \u0438 jpg\\7 \u043B\u0430\u0431\u0430\\9.png"
-    },
-    "Health": 32,
-    "SpawnChance": 2,
-    "GoldReward": 20
+      "Name": "skeleton_1",
+      "ImagePath": "icons/Monsters/skeleton_1.png"
+    }
   },
   {
-    "Name": "77",
+    "Name": "Третий враг",
+    "Health": 30,
+    "Damage": 3,
+    "GoldReward": 55,
     "Icon": {
-      "Name": "\u0410\u0440\u0442\u0443\u0440 \u041F\u0438\u0440\u043E\u0436\u043A\u043E\u0444.png",
-      "ImagePath": "C:\\va-11\\\u0411\u0443\u043B\u0449\u0438\u0442\\\u042D\u043A\u0441\u043F\u043E\u0440\u0442\\png \u0438 jpg\\\u0410\u0440\u0442\u0443\u0440 \u041F\u0438\u0440\u043E\u0436\u043A\u043E\u0444.png"
-    },
-    "Health": 16,
-    "SpawnChance": 1,
-    "GoldReward": 67
+      "Name": "goblin_7",
+      "ImagePath": "icons/Monsters/goblin_7.png"
+    }
+  },
+  {
+    "Name": "Четвертый враг",
+    "Health": 40,
+    "Damage": 4,
+    "GoldReward": 75,
+    "Icon": {
+      "Name": "troll_1",
+      "ImagePath": "icons/Monsters/troll_1.png"
+    }
   }
 ]
