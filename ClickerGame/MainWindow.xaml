@@ -46,6 +46,8 @@
 
                 <TextBlock x:Name="GoldText" Text="Золото: 0" FontSize="18" Margin="0,20,0,0" HorizontalAlignment="Center"/>
                 <TextBlock x:Name="DamageText" Text="Урон: 1" FontSize="18" HorizontalAlignment="Center"/>
+                <Button x:Name="UpgradeDamageButton" Click="UpgradeDamageButton_Click"
+                        Margin="0,12,0,0" Padding="12,8"/>
             </StackPanel>
         </Grid>
     </Grid>
