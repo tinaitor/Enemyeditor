@@ -9,34 +9,39 @@
         public string ImagePath { get; private set; }
         public bool IsDead => Health.ToString() == "0";
 
-        public Enemy(EnemyTemplate template)
+        public Enemy(EnemyTemplate template, int level)
         {
             Name = template.Name;
-          
-            MaxHealth = BigNumber.FromLong(template.Health);
+            ImagePath = template.Icon?.ImagePath;
+
+            MaxHealth = Scale(BigNumber.FromLong(template.Health), template.HealthModifier, level);
             Health = MaxHealth;
 
-            Reward = BigNumber.FromLong(template.GoldReward);
+            Reward = Scale(BigNumber.FromLong(template.GoldReward), template.GoldModifier, level);
+        }
 
-            ImagePath = template.Icon?.ImagePath;
+        private static BigNumber Scale(BigNumber baseValue, double modifier, int level)
+        {
+            var result = baseValue;
+            for (int i = 0; i < level; i++)
+                result = result.Multiply(modifier);
+            return result;
         }
 
         public bool TakeDamage(BigNumber damage)
         {
             if (IsDead) return false;
 
-            
             string hpStr = Health.ToString();
             string dmgStr = damage.ToString();
 
-            
-            if (hpStr.Length < dmgStr.Length || (hpStr.Length == dmgStr.Length && string.Compare(hpStr, dmgStr) <= 0))
+            if (hpStr.Length < dmgStr.Length ||
+                (hpStr.Length == dmgStr.Length && string.Compare(hpStr, dmgStr) <= 0))
             {
                 Health = BigNumber.FromLong(0);
                 return true;
             }
 
-            
             Health = Health - damage;
             return false;
         }

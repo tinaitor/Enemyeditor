@@ -9,7 +9,7 @@ namespace WpfApp48
     public partial class MainWindow : Window
     {
         private readonly EnemyRepository repository = new EnemyRepository();
-        private readonly Player player = new Player(BigNumber.FromLong(1));
+        private readonly Player player = new Player();
         private Enemy? currentEnemy;
 
         public MainWindow()
@@ -25,7 +25,7 @@ namespace WpfApp48
         private Enemy? CreateEnemyFromRandomTemplate()
         {
             var template = repository.GetRandomTemplate();
-            return template == null ? null : new Enemy(template);
+            return template == null ? null : new Enemy(template, player.KillCount);
         }
 
         private void EnemyButton_Click(object sender, RoutedEventArgs e)
@@ -37,6 +37,7 @@ namespace WpfApp48
             if (isDefeated)
             {
                 player.AddGold(currentEnemy.Reward);
+                player.OnEnemyKilled();                    // ← порядок важен
                 currentEnemy = CreateEnemyFromRandomTemplate();
             }
 
@@ -64,9 +65,9 @@ namespace WpfApp48
             if (!string.IsNullOrEmpty(currentEnemy.ImagePath))
             {
                 string fixedPath = currentEnemy.ImagePath.Replace("/", "\\");
-                string fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fixedPath);
+                string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fixedPath);
 
-                if (System.IO.File.Exists(fullPath))
+                if (File.Exists(fullPath))
                 {
                     try
                     {
