@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ClickerGame
 {
-    public class BigNumber
+    public class BigNumber : IComparable<BigNumber>
     {
         private int[] number;
         private const int Base = 1000;
@@ -29,6 +29,21 @@ namespace ClickerGame
         }
 
         public static BigNumber FromLong(long value) => new BigNumber(value.ToString());
+
+        public int CompareTo(BigNumber? other)
+        {
+            if (other == null) return 1;
+            if (number.Length != other.number.Length)
+                return number.Length.CompareTo(other.number.Length);
+
+            for (int i = number.Length - 1; i >= 0; i--)
+            {
+                if (number[i] != other.number[i])
+                    return number[i].CompareTo(other.number[i]);
+            }
+
+            return 0;
+        }
 
         public override string ToString()
         {

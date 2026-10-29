@@ -44,8 +44,19 @@ namespace WpfApp48
             UpdateUI();
         }
 
+        private void UpgradeDamageButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (player.TryUpgrade())
+                UpdateUI();
+        }
+
         private void UpdateUI()
         {
+            GoldText.Text = "Золото: " + player.Gold;
+            DamageText.Text = "Урон: " + player.Damage;
+            UpgradeDamageButton.Content = "Улучшить урон (" + player.UpgradeCost + " золота)";
+            UpgradeDamageButton.IsEnabled = player.Gold.CompareTo(player.UpgradeCost) >= 0;
+
             if (currentEnemy == null)
             {
                 EnemyNameText.Text = "Врагов нет";
@@ -58,9 +69,6 @@ namespace WpfApp48
             EnemyButton.IsEnabled = true;
             EnemyNameText.Text = currentEnemy.Name;
             HealthText.Text = "Здоровье: " + currentEnemy.Health.ToString();
-
-            GoldText.Text = "Золото: " + player.Gold.ToString();
-            DamageText.Text = "Урон: " + player.Damage.ToString();
 
             if (!string.IsNullOrEmpty(currentEnemy.ImagePath))
             {
