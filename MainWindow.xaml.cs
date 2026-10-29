@@ -50,8 +50,10 @@ namespace Enemyeditor
                 Name = NameTextBox.Text,
                 Icon = icon,
                 Health = int.TryParse(HealthTextBox.Text, out int h) ? h : 0,
-                GoldReward = int.TryParse(SpeedTextBox.Text, out int s) ? s : 0,
-                SpawnChance = double.TryParse(SpawnChanceTextBox.Text, out double sc) && sc > 0 ? sc : 1.0
+                GoldReward = long.TryParse(GoldRewardTextBox.Text, out long g) ? g : 0,
+                SpawnChance = double.TryParse(SpawnChanceTextBox.Text, out double sc) && sc > 0 ? sc : 1.0,
+                HealthModifier = double.TryParse(HealthModifierTextBox.Text, out double hm) && hm > 0 ? hm : 1.0,
+                GoldModifier = double.TryParse(GoldModifierTextBox.Text, out double gm) && gm > 0 ? gm : 1.0
             };
 
             enemyList.Add(enemy);
@@ -122,8 +124,10 @@ namespace Enemyeditor
             {
                 SelectedNameText.Text = enemy.Name;
                 SelectedHealthText.Text = $"Здоровье: {enemy.Health}";
-                SelectedSpawnChanceText.Text = $"Шанс: {enemy.SpawnChance}";
-                SelectedSpeedText.Text = $"Золото: {enemy.GoldReward}";
+                SelectedGoldRewardText.Text = $"Золото: {enemy.GoldReward}";
+                SelectedSpawnChanceText.Text = $"Шанс (вес): {enemy.SpawnChance}";
+                SelectedHealthModifierText.Text = $"×HP за уровень: {enemy.HealthModifier}";
+                SelectedGoldModifierText.Text = $"×Золото за уровень: {enemy.GoldModifier}";
 
                 if (!string.IsNullOrEmpty(enemy.Icon.ImagePath))
                 {
@@ -161,8 +165,10 @@ namespace Enemyeditor
         {
             SelectedNameText.Text = "";
             SelectedHealthText.Text = "";
+            SelectedGoldRewardText.Text = "";
             SelectedSpawnChanceText.Text = "";
-            SelectedSpeedText.Text = "";
+            SelectedHealthModifierText.Text = "";
+            SelectedGoldModifierText.Text = "";
             SelectedIconImage.Source = null;
             OpenImageButton.IsEnabled = false;
         }

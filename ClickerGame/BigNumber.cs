@@ -98,5 +98,48 @@ namespace ClickerGame
             result.TrimLeadingZeros();
             return result;
         }
+        public BigNumber Multiply(double factor)
+        {
+            long num = (long)Math.Round(factor * 1000.0);
+            if (num == 0) return new BigNumber("0");
+            return MultiplyLong(num).DivideLong(1000);
+        }
+        private BigNumber MultiplyLong(long m)
+        {
+            int[] res = new int[number.Length + 8];
+            long carry = 0;
+            for (int i = 0; i < number.Length; i++)
+            {
+                long t = number[i] * m + carry;
+                res[i] = (int)(t % Base);
+                carry = t / Base;
+            }
+            int pos = number.Length;
+            while (carry > 0)
+            {
+                res[pos++] = (int)(carry % Base);
+                carry /= Base;
+            }
+            return FromBlocks(res);
+        }
+        private BigNumber DivideLong(long d)
+        {
+            int[] res = new int[number.Length];
+            long remainder = 0;
+            for (int i = number.Length - 1; i >= 0; i--)
+            {
+                long t = remainder * Base + number[i];
+                res[i] = (int)(t / d);
+                remainder = t % d;
+            }
+            return FromBlocks(res);
+        }
+        private static BigNumber FromBlocks(int[] blocks)
+        {
+            BigNumber r = new BigNumber("0");
+            r.number = blocks;
+            r.TrimLeadingZeros();
+            return r;
+        }
     }
 }
