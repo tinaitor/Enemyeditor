@@ -2,8 +2,8 @@
   {
     "Name": "123",
     "Icon": {
-      "Name": "11.png",
-      "ImagePath": "C:\\va-11\\\u0411\u0443\u043B\u0449\u0438\u0442\\\u042D\u043A\u0441\u043F\u043E\u0440\u0442\\png \u0438 jpg\\7 \u043B\u0430\u0431\u0430\\11.png"
+      "Name": "goblin_1.png",
+      "ImagePath": "icons/Monsters/goblin_1.png"
     },
     "Health": 1,
     "SpawnChance": 6,
@@ -12,8 +12,8 @@
   {
     "Name": "16",
     "Icon": {
-      "Name": "9.png",
-      "ImagePath": "C:\\va-11\\\u0411\u0443\u043B\u0449\u0438\u0442\\\u042D\u043A\u0441\u043F\u043E\u0440\u0442\\png \u0438 jpg\\7 \u043B\u0430\u0431\u0430\\9.png"
+      "Name": "skeleton_2.png",
+      "ImagePath": "icons/Monsters/skeleton_2.png"
     },
     "Health": 2,
     "SpawnChance": 3,
@@ -22,8 +22,8 @@
   {
     "Name": "77",
     "Icon": {
-      "Name": "\u0410\u0440\u0442\u0443\u0440 \u041F\u0438\u0440\u043E\u0436\u043A\u043E\u0444.png",
-      "ImagePath": "C:\\va-11\\\u0411\u0443\u043B\u0449\u0438\u0442\\\u042D\u043A\u0441\u043F\u043E\u0440\u0442\\png \u0438 jpg\\\u0410\u0440\u0442\u0443\u0440 \u041F\u0438\u0440\u043E\u0436\u043A\u043E\u0444.png"
+      "Name": "troll_1.png",
+      "ImagePath": "icons/Monsters/troll_1.png"
     },
     "Health": 16,
     "SpawnChance": 1,

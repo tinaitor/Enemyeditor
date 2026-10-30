@@ -70,28 +70,44 @@ namespace WpfApp48
             EnemyNameText.Text = currentEnemy.Name;
             HealthText.Text = "Здоровье: " + currentEnemy.Health.ToString();
 
-            if (!string.IsNullOrEmpty(currentEnemy.ImagePath))
-            {
-                string fixedPath = currentEnemy.ImagePath.Replace("/", "\\");
-                string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fixedPath);
+            EnemyImage.Source = null;
+            string? fullPath = ResolveImagePath(currentEnemy.ImagePath);
 
-                if (File.Exists(fullPath))
+            if (fullPath != null)
+            {
+                try
                 {
-                    try
-                    {
-                        BitmapImage bmp = new BitmapImage();
-                        bmp.BeginInit();
-                        bmp.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bmp.CacheOption = BitmapCacheOption.OnLoad;
-                        bmp.EndInit();
-                        EnemyImage.Source = bmp;
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка загрузки картинки: " + ex.Message);
-                    }
+                    BitmapImage bmp = new BitmapImage();
+                    bmp.BeginInit();
+                    bmp.UriSource = new Uri(fullPath, UriKind.Absolute);
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    bmp.EndInit();
+                    EnemyImage.Source = bmp;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка загрузки картинки: " + ex.Message);
                 }
             }
+        }
+
+        // Ищет картинку: сначала по пути из JSON (относительно папки игры),
+        // если не нашли — по имени файла внутри папки icons.
+        private static string? ResolveImagePath(string? imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath)) return null;
+
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string fixedPath = imagePath.Replace("/", "\\");
+            string direct = Path.Combine(baseDir, fixedPath);
+            if (File.Exists(direct)) return direct;
+
+            string iconsDir = Path.Combine(baseDir, "icons");
+            if (!Directory.Exists(iconsDir)) return null;
+
+            string fileName = Path.GetFileName(fixedPath);
+            return Directory.GetFiles(iconsDir, fileName, SearchOption.AllDirectories)
+                            .FirstOrDefault();
         }
     }
 }
