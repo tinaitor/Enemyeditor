@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enemyeditor", "Enemyeditor.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClickerGame", "ClickerGame\ClickerGame.csproj", "{D0A26FC4-38A5-F0A5-F139-336908A20EC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimedClicker", "TimedClicker\TimedClicker.csproj", "{7B3E5A21-4C9D-4F1A-9E2B-6D8C1A0F3B54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D0A26FC4-38A5-F0A5-F139-336908A20EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0A26FC4-38A5-F0A5-F139-336908A20EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0A26FC4-38A5-F0A5-F139-336908A20EC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B3E5A21-4C9D-4F1A-9E2B-6D8C1A0F3B54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B3E5A21-4C9D-4F1A-9E2B-6D8C1A0F3B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B3E5A21-4C9D-4F1A-9E2B-6D8C1A0F3B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B3E5A21-4C9D-4F1A-9E2B-6D8C1A0F3B54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

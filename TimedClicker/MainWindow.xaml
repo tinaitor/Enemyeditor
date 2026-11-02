@@ -1,0 +1,18 @@
+<Window x:Class="TimedClicker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Кликер на время" Height="520" Width="720">
+    <DockPanel Margin="10">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button x:Name="StartButton" Content="Старт" Width="90" Click="StartButton_Click"/>
+            <TextBlock x:Name="PointsText" Text="Очки: 0" FontSize="16" Margin="20,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="TimeText" Text="Время: 0.0" FontSize="16" Margin="20,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- зона, в которой появляются объекты -->
+        <Border BorderBrush="Gray" BorderThickness="1">
+            <Canvas x:Name="GameCanvas" Background="WhiteSmoke" ClipToBounds="True"
+                    MouseLeftButtonDown="GameCanvas_MouseLeftButtonDown"/>
+        </Border>
+    </DockPanel>
+</Window>

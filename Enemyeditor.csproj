@@ -13,6 +13,10 @@
     <Page Remove="ClickerGame/**" />
     <ApplicationDefinition Remove="ClickerGame/**" />
     <None Remove="ClickerGame/**" />
+    <Compile Remove="TimedClicker/**" />
+    <Page Remove="TimedClicker/**" />
+    <ApplicationDefinition Remove="TimedClicker/**" />
+    <None Remove="TimedClicker/**" />
     <Compile Remove="ClickerGame.Core/**" />
     <Compile Remove="BackendTests/**" />
   </ItemGroup>
