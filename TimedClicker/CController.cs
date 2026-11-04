@@ -4,7 +4,7 @@ namespace TimedClicker
 {
     public class CController // класс, управляющий собираемыми объектами
     {
-        List<CObject> objects; // список собираемых объектов
+        List<CCollectable> objects; // список собираемых объектов
         double spawnRate;      // время между созданием собираемых объектов
         double time;           // время с момента создания последнего объекта
         Random rng;
@@ -22,7 +22,7 @@ namespace TimedClicker
         public CController(double spawnRate, double startTime, double gameTime, Size sceneSize)
         {
             rng = new Random();
-            objects = new List<CObject>();
+            objects = new List<CCollectable>();
             this.spawnRate = spawnRate;
             time = startTime;
             this.gameTime = gameTime;
@@ -36,7 +36,7 @@ namespace TimedClicker
         }
 
         // геттеры
-        public List<CObject> getObjects() { return objects; }
+        public List<CCollectable> getObjects() { return objects; }
         public double getPoints() { return points; }
         public double getTimeLeft() { return Math.Max(0, gameTime - elapsedTime); }
 
@@ -51,11 +51,11 @@ namespace TimedClicker
             // объект должен целиком помещаться в сцену
             double x = rng.NextDouble() * (sceneSize.Width - size);
             double y = rng.NextDouble() * (sceneSize.Height - size);
-            objects.Add(new CObject(new Point(x, y), size, lifetime));
+            objects.Add(new CCollectable(new Point(x, y), size, lifetime));
         }
 
         // удаление объекта
-        void removeObject(CObject obj)
+        void removeObject(CCollectable obj)
         {
             objects.Remove(obj);
         }
