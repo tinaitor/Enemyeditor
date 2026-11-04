@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace TimedClicker
@@ -8,24 +10,25 @@ namespace TimedClicker
         double spawnRate;
         double time;
         Random rng;
-
         double minLifetime;
         double maxLifetime;
-
         double minSpriteSize;
         double maxSpriteSize;
         Size sceneSize;
         double points;
         double gameTime;
         double elapsedTime;
+        double cooldown;
+        CPlayer player;
 
-        public CController(double spawnRate, double startTime, double gameTime, Size sceneSize)
+        public CController(double spawnRate, double startTime, double gameTime, double cooldown, Size sceneSize)
         {
             rng = new Random();
             objects = new List<CCollectable>();
             this.spawnRate = spawnRate;
             time = startTime;
             this.gameTime = gameTime;
+            this.cooldown = cooldown;
             this.sceneSize = sceneSize;
             elapsedTime = 0;
             points = 0;
@@ -33,31 +36,31 @@ namespace TimedClicker
             maxLifetime = 5;
             minSpriteSize = 10;
             maxSpriteSize = 20;
+            player = new CPlayer(cooldown);
         }
 
         public List<CCollectable> getObjects() { return objects; }
         public double getPoints() { return points; }
         public double getTimeLeft() { return Math.Max(0, gameTime - elapsedTime); }
-
         public bool isGameOver() { return elapsedTime >= gameTime && objects.Count == 0; }
+
+        public void pointsIncrease(double value)
+        {
+            points += value;
+        }
 
         void createObject()
         {
             double size = minSpriteSize + rng.NextDouble() * (maxSpriteSize - minSpriteSize);
             double lifetime = minLifetime + rng.NextDouble() * (maxLifetime - minLifetime);
-
             double x = rng.NextDouble() * (sceneSize.Width - size);
             double y = rng.NextDouble() * (sceneSize.Height - size);
-            objects.Add(new CCollectable(new Point(x, y), size, lifetime));
-        }
-
-        void removeObject(CCollectable obj)
-        {
-            objects.Remove(obj);
+            objects.Add(new CPointGiver(new Point(x, y), size, lifetime));
         }
 
         public void update(double deltaTime)
         {
+            player.update(deltaTime);
             elapsedTime += deltaTime;
 
             if (elapsedTime < gameTime)
@@ -73,18 +76,20 @@ namespace TimedClicker
             for (int i = objects.Count - 1; i >= 0; i--)
             {
                 if (objects[i].updateLifetime(deltaTime))
-                    removeObject(objects[i]);
+                    objects.RemoveAt(i);
             }
         }
 
         public bool click(Point mousePosition)
         {
+            if (!player.CanClick) return false;
+
             for (int i = objects.Count - 1; i >= 0; i--)
             {
-                if (objects[i].isMouseOnObject(mousePosition))
+                if (objects[i].onClick(player, this, mousePosition))
                 {
-                    points += objects[i].getPointsValue();
-                    removeObject(objects[i]);
+                    objects.RemoveAt(i);
+                    player.startCooldown();
                     return true;
                 }
             }

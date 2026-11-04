@@ -1,14 +1,15 @@
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace TimedClicker
 {
-    // окно только отрисовывает объекты и передаёт события в контроллер
     public partial class MainWindow : Window
     {
-        const double SpawnRate = 0.7; // новый объект каждые 0.7 сек
-        const double GameTime = 30;   // объекты появляются 30 сек
+        const double SpawnRate = 0.7;
+        const double GameTime = 30;
+        const double Cooldown = 0.3;
 
         DispatcherTimer timer;
         CController? controller;
@@ -16,7 +17,6 @@ namespace TimedClicker
         public MainWindow()
         {
             InitializeComponent();
-            // таймер, обновляющийся каждые 100 миллисекунд
             timer = new DispatcherTimer();
             timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             timer.Tick += Timer_Tick;
@@ -25,8 +25,7 @@ namespace TimedClicker
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             Size sceneSize = new Size(GameCanvas.ActualWidth, GameCanvas.ActualHeight);
-            // startTime = SpawnRate, чтобы первый объект появился сразу
-            controller = new CController(SpawnRate, SpawnRate, GameTime, sceneSize);
+            controller = new CController(SpawnRate, SpawnRate, GameTime, Cooldown, sceneSize);
             StartButton.IsEnabled = false;
             timer.Start();
             Draw();
@@ -36,7 +35,7 @@ namespace TimedClicker
         {
             if (controller == null) return;
 
-            controller.update(0.1); // обновляем состояние контроллера
+            controller.update(0.1);
             Draw();
 
             if (controller.isGameOver())
@@ -51,12 +50,10 @@ namespace TimedClicker
         {
             if (controller == null || !timer.IsEnabled) return;
 
-            // позиция курсора относительно сцены
             if (controller.click(e.GetPosition(GameCanvas)))
                 Draw();
         }
 
-        // отрисовка объектов контроллера и счётчиков
         private void Draw()
         {
             if (controller == null) return;
