@@ -7,6 +7,8 @@
             <Button x:Name="StartButton" Content="Старт" Width="90" Click="StartButton_Click"/>
             <TextBlock x:Name="PointsText" Text="Очки: 0" FontSize="16" Margin="20,0,0,0" VerticalAlignment="Center"/>
             <TextBlock x:Name="TimeText" Text="Время: 0.0" FontSize="16" Margin="20,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="CooldownText" Text="Перезарядка: готов" FontSize="16"
+           Margin="20,0,0,0" VerticalAlignment="Center"/>
         </StackPanel>
 
         <!-- зона, в которой появляются объекты -->

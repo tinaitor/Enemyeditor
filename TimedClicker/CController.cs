@@ -1,31 +1,34 @@
+using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace TimedClicker
 {
-    public class CController // класс, управляющий собираемыми объектами
+    public class CController
     {
-        List<CObject> objects; // список собираемых объектов
-        double spawnRate;      // время между созданием собираемых объектов
-        double time;           // время с момента создания последнего объекта
+        List<CCollectable> objects;
+        double spawnRate;
+        double time;
         Random rng;
-        // минимальное и максимальное время жизни собираемых объектов
         double minLifetime;
         double maxLifetime;
-        // минимальный и максимальный размер собираемых объектов
         double minSpriteSize;
         double maxSpriteSize;
-        Size sceneSize;        // размер сцены
-        double points;         // набранные очки
-        double gameTime;       // отведённое время игры, сек
-        double elapsedTime;    // время, прошедшее с начала игры
+        Size sceneSize;
+        double points;
+        double gameTime;
+        double elapsedTime;
+        double cooldown;
+        CPlayer player;
 
-        public CController(double spawnRate, double startTime, double gameTime, Size sceneSize)
+        public CController(double spawnRate, double startTime, double gameTime, double cooldown, Size sceneSize)
         {
             rng = new Random();
-            objects = new List<CObject>();
+            objects = new List<CCollectable>();
             this.spawnRate = spawnRate;
             time = startTime;
             this.gameTime = gameTime;
+            this.cooldown = cooldown;
             this.sceneSize = sceneSize;
             elapsedTime = 0;
             points = 0;
@@ -33,39 +36,44 @@ namespace TimedClicker
             maxLifetime = 5;
             minSpriteSize = 10;
             maxSpriteSize = 20;
+            player = new CPlayer(cooldown);
         }
 
-        // геттеры
-        public List<CObject> getObjects() { return objects; }
+        public List<CCollectable> getObjects() { return objects; }
         public double getPoints() { return points; }
         public double getTimeLeft() { return Math.Max(0, gameTime - elapsedTime); }
-
-        // игра окончена: время вышло и на сцене не осталось объектов
         public bool isGameOver() { return elapsedTime >= gameTime && objects.Count == 0; }
 
-        // создание нового объекта в случайной точке сцены
+        public double getCooldownLeft()
+        {
+            return player.getCooldownLeft();
+        }
+
+        public void pointsIncrease(double value)
+        {
+            points += value;
+        }
+
         void createObject()
         {
             double size = minSpriteSize + rng.NextDouble() * (maxSpriteSize - minSpriteSize);
             double lifetime = minLifetime + rng.NextDouble() * (maxLifetime - minLifetime);
-            // объект должен целиком помещаться в сцену
             double x = rng.NextDouble() * (sceneSize.Width - size);
             double y = rng.NextDouble() * (sceneSize.Height - size);
-            objects.Add(new CObject(new Point(x, y), size, lifetime));
+            Point pos = new Point(x, y);
+
+            double roll = rng.NextDouble();
+            if (roll < 0.8)
+                objects.Add(new CPointGiver(pos, size, lifetime));
+            else
+                objects.Add(new CCooldownReducer(pos, size, lifetime, 0.05));
         }
 
-        // удаление объекта
-        void removeObject(CObject obj)
-        {
-            objects.Remove(obj);
-        }
-
-        // обновление состояния: появление новых объектов и время жизни старых
         public void update(double deltaTime)
         {
+            player.update(deltaTime);
             elapsedTime += deltaTime;
 
-            // новые объекты появляются, пока не вышло отведённое время
             if (elapsedTime < gameTime)
             {
                 time += deltaTime;
@@ -76,24 +84,24 @@ namespace TimedClicker
                 }
             }
 
-            // проход с конца, чтобы удаление не сдвигало ещё не проверенные элементы
             for (int i = objects.Count - 1; i >= 0; i--)
             {
                 if (objects[i].updateLifetime(deltaTime))
-                    removeObject(objects[i]);
+                    objects.RemoveAt(i);
             }
         }
 
-        // отслеживание нажатия курсора; возвращает true, если попали по объекту
         public bool click(Point mousePosition)
         {
-            // с конца — при наложении срабатывает верхний объект
+            if (!player.CanClick) return false;
+
+            player.startCooldown();
+
             for (int i = objects.Count - 1; i >= 0; i--)
             {
-                if (objects[i].isMouseOnObject(mousePosition))
+                if (objects[i].onClick(player, this, mousePosition))
                 {
-                    points += objects[i].getPointsValue();
-                    removeObject(objects[i]);
+                    objects.RemoveAt(i);
                     return true;
                 }
             }
