@@ -50,8 +50,8 @@ namespace TimedClicker
         {
             if (controller == null || !timer.IsEnabled) return;
 
-            if (controller.click(e.GetPosition(GameCanvas)))
-                Draw();
+            controller.click(e.GetPosition(GameCanvas));
+            Draw();
         }
 
         private void Draw()
@@ -64,6 +64,12 @@ namespace TimedClicker
 
             PointsText.Text = $"Очки: {controller.getPoints():F0}";
             TimeText.Text = $"Время: {controller.getTimeLeft():F1}";
+
+            double cd = controller.getCooldownLeft();
+            if (cd > 0)
+                CooldownText.Text = $"Перезарядка: {cd:F2} с";
+            else
+                CooldownText.Text = "Перезарядка: готов";
         }
     }
 }

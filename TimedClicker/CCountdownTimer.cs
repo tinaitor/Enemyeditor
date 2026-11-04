@@ -28,7 +28,7 @@ namespace TimedClicker
             currentTime = 0;
         }
 
-        public double getTime()
+        public double getTimeLeft()
         {
             return Math.Max(0, targetTime - currentTime);
         }

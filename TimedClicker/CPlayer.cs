@@ -38,5 +38,11 @@ namespace TimedClicker
             timeBeforeClick = Math.Max(0.1, timeBeforeClick - seconds);
             countdownTimer = new CCountdownTimer(timeBeforeClick);
         }
+
+        public double getCooldownLeft()
+        {
+            if (canClick) return 0;
+            return countdownTimer.getTimeLeft();
+        }
     }
 }

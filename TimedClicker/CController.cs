@@ -44,6 +44,11 @@ namespace TimedClicker
         public double getTimeLeft() { return Math.Max(0, gameTime - elapsedTime); }
         public bool isGameOver() { return elapsedTime >= gameTime && objects.Count == 0; }
 
+        public double getCooldownLeft()
+        {
+            return player.getCooldownLeft();
+        }
+
         public void pointsIncrease(double value)
         {
             points += value;
@@ -84,12 +89,13 @@ namespace TimedClicker
         {
             if (!player.CanClick) return false;
 
+            player.startCooldown();
+
             for (int i = objects.Count - 1; i >= 0; i--)
             {
                 if (objects[i].onClick(player, this, mousePosition))
                 {
                     objects.RemoveAt(i);
-                    player.startCooldown();
                     return true;
                 }
             }
