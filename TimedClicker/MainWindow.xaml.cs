@@ -62,7 +62,7 @@ namespace TimedClicker
             if (controller == null) return;
 
             GameCanvas.Children.Clear();
-            foreach (CObject obj in controller.getObjects())
+            foreach (CCollectable obj in controller.getObjects())
                 GameCanvas.Children.Add(obj.getSprite());
 
             PointsText.Text = $"Очки: {controller.getPoints():F0}";
