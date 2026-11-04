@@ -32,5 +32,10 @@ namespace TimedClicker
         {
             return Math.Max(0, targetTime - currentTime);
         }
+
+        public void setTargetTime(double newTarget)
+        {
+            targetTime = newTarget;
+        }
     }
 }

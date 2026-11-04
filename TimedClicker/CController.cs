@@ -60,7 +60,13 @@ namespace TimedClicker
             double lifetime = minLifetime + rng.NextDouble() * (maxLifetime - minLifetime);
             double x = rng.NextDouble() * (sceneSize.Width - size);
             double y = rng.NextDouble() * (sceneSize.Height - size);
-            objects.Add(new CPointGiver(new Point(x, y), size, lifetime));
+            Point pos = new Point(x, y);
+
+            double roll = rng.NextDouble();
+            if (roll < 0.8)
+                objects.Add(new CPointGiver(pos, size, lifetime));
+            else
+                objects.Add(new CCooldownReducer(pos, size, lifetime, 0.05));
         }
 
         public void update(double deltaTime)

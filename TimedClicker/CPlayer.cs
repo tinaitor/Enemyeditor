@@ -36,7 +36,7 @@ namespace TimedClicker
         public void increaseSpeed(double seconds)
         {
             timeBeforeClick = Math.Max(0.1, timeBeforeClick - seconds);
-            countdownTimer = new CCountdownTimer(timeBeforeClick);
+            countdownTimer.setTargetTime(timeBeforeClick);
         }
 
         public double getCooldownLeft()
