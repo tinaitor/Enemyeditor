@@ -1,36 +1,33 @@
-﻿<Window x:Class="WpfApp48.MainWindow"
+<Window x:Class="WpfApp48.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp48"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Grid Margin="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        Title="Кликер: противники и бонусы" Height="500" Width="820">
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-            <!--инфа о враге -->
-            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBlock x:Name="EnemyNameText" Text="Имя врага" FontSize="24" FontWeight="Bold"/>
-                <TextBlock x:Name="HealthText" Text="Здоровье: 0" FontSize="20" Margin="0,10,0,0"/>
-            </StackPanel>
+        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+            <TextBlock x:Name="EnemyNameText" FontSize="24" FontWeight="Bold"/>
+            <TextBlock x:Name="HealthText" FontSize="20" Margin="0,10,0,0"/>
+            <TextBlock x:Name="GoldText" FontSize="18" Margin="0,22,0,0"/>
+            <TextBlock x:Name="DamageText" FontSize="18"/>
+            <TextBlock x:Name="CooldownText" FontSize="18"/>
+            <TextBlock x:Name="BoostText" FontSize="16"/>
+            <Button x:Name="UpgradeDamageButton" Click="UpgradeDamageButton_Click"
+                    Margin="0,16,12,0" Padding="12,8"/>
+            <Button x:Name="UpgradeCooldownButton" Click="UpgradeCooldownButton_Click"
+                    Margin="0,8,12,0" Padding="12,8"/>
+            <TextBlock Margin="0,20,12,0" TextWrapping="Wrap"
+                       Text="Сферы: красная — урон x2 на 10 с; голубая — перезарядка -0,1 с; золотая — золото. Нажимайте на сферы в области противника."/>
+        </StackPanel>
 
-            <!--кнопка врага и статы игрока -->
-            <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                
-                <Button x:Name="EnemyButton" Click="EnemyButton_Click" Width="200" Height="200" Background="Transparent" BorderThickness="0">
-                    <Image x:Name="EnemyImage" Stretch="Uniform"/>
-                </Button>
-
-                <TextBlock x:Name="GoldText" Text="Золото: 0" FontSize="18" Margin="0,20,0,0" HorizontalAlignment="Center"/>
-                <TextBlock x:Name="DamageText" Text="Урон: 1" FontSize="18" HorizontalAlignment="Center"/>
-                <Button x:Name="UpgradeDamageButton" Click="UpgradeDamageButton_Click"
-                        Margin="0,12,0,0" Padding="12,8"/>
-            </StackPanel>
+        <Grid Grid.Column="1" Width="280" Height="280" VerticalAlignment="Center"
+              HorizontalAlignment="Center" Cursor="Hand" MouseLeftButtonDown="GameArea_MouseLeftButtonDown">
+            <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Background="#FFF3F3F3"/>
+            <Image x:Name="EnemyImage" Margin="24" Stretch="Uniform" IsHitTestVisible="False"/>
+            <Canvas x:Name="BonusCanvas" Background="Transparent" IsHitTestVisible="False"/>
         </Grid>
     </Grid>
 </Window>
