@@ -19,6 +19,16 @@
                     Margin="0,16,12,0" Padding="12,8"/>
             <Button x:Name="UpgradeCooldownButton" Click="UpgradeCooldownButton_Click"
                     Margin="0,8,12,0" Padding="12,8"/>
+            <Button x:Name="UpgradeGoldSphereButton"
+        Click="UpgradeGoldSphereButton_Click"
+        Margin="0,8,12,0"
+        Padding="12,8"/>
+
+            <Button x:Name="UpgradeCooldownSphereButton"
+        Click="UpgradeCooldownSphereButton_Click"
+        Margin="0,8,12,0"
+        Padding="12,8"/>
+
             <TextBlock Margin="0,20,12,0" TextWrapping="Wrap"
                        Text="Сферы: красная — урон x2 на 10 с; голубая — перезарядка -0,1 с; золотая — золото. Нажимайте на сферы в области противника."/>
         </StackPanel>
