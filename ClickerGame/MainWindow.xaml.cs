@@ -78,6 +78,19 @@ namespace WpfApp48
             if (player.TryUpgradeCooldown()) UpdateUI();
         }
 
+        private void UpgradeGoldSphereButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (player.TryUpgradeGoldSphere())
+                UpdateUI();
+        }
+
+        private void UpgradeCooldownSphereButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (player.TryUpgradeCooldownSphere())
+                UpdateUI();
+        }
+
+
         private void UpdateUI()
         {
             GoldText.Text = "Золото: " + player.Gold;
