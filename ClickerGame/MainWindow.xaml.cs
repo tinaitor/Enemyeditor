@@ -78,6 +78,19 @@ namespace WpfApp48
             if (player.TryUpgradeCooldown()) UpdateUI();
         }
 
+        private void UpgradeGoldSphereButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (player.TryUpgradeGoldSphere())
+                UpdateUI();
+        }
+
+        private void UpgradeCooldownSphereButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (player.TryUpgradeCooldownSphere())
+                UpdateUI();
+        }
+
+
         private void UpdateUI()
         {
             GoldText.Text = "Золото: " + player.Gold;
@@ -92,6 +105,22 @@ namespace WpfApp48
             UpgradeDamageButton.IsEnabled = player.Gold.CompareTo(player.UpgradeCost) >= 0;
             UpgradeCooldownButton.Content = "Ускорить атаку (" + player.CooldownUpgradeCost + " золота)";
             UpgradeCooldownButton.IsEnabled = player.Cooldown > 0.200001 && player.Gold.CompareTo(player.CooldownUpgradeCost) >= 0;
+            UpgradeGoldSphereButton.Content =
+            $"Улучшить золотую сферу, ур. {player.GoldBonusLevel} " +
+            $"({player.GoldBonusUpgradeCost} золота)";
+
+            UpgradeGoldSphereButton.IsEnabled =
+                player.Gold.CompareTo(player.GoldBonusUpgradeCost) >= 0 &&
+                player.GoldBonusLevel < 20;
+
+            UpgradeCooldownSphereButton.Content =
+                $"Усилить голубую сферу, ур. {player.CooldownSphereLevel} " +
+                $"({player.CooldownSphereUpgradeCost} золота)";
+
+            UpgradeCooldownSphereButton.IsEnabled =
+                player.CanUpgradeCooldownSphere &&
+                player.Gold.CompareTo(player.CooldownSphereUpgradeCost) >= 0;
+
 
             BonusCanvas.Children.Clear();
             foreach (CCollectable sphere in bonuses.Objects)

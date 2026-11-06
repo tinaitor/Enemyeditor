@@ -9,6 +9,10 @@ namespace ClickerGame
             : base(position, diameter, lifetime, Brushes.Gold, "Мгновенное золото") { }
 
         public override string Description => "Мгновенное золото";
-        public override void OnClick(Player player) => player.AddGold(BigNumber.FromLong(50 + 10L * player.KillCount));
+        public override void OnClick(Player player)
+        {
+            player.AddGold(player.GetGoldSphereReward());
+        }
+
     }
 }
