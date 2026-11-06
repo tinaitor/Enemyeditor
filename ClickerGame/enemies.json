@@ -1,6 +1,6 @@
 [
   {
-    "Name": "123",
+    "Name": "Валентин",
     "Icon": {
       "Name": "goblin_1.png",
       "ImagePath": "icons/Monsters/goblin_1.png"
@@ -10,7 +10,7 @@
     "GoldReward": 8
   },
   {
-    "Name": "16",
+    "Name": "Томарка",
     "Icon": {
       "Name": "skeleton_2.png",
       "ImagePath": "icons/Monsters/skeleton_2.png"
@@ -20,7 +20,7 @@
     "GoldReward": 20
   },
   {
-    "Name": "77",
+    "Name": "Амбасатор",
     "Icon": {
       "Name": "troll_1.png",
       "ImagePath": "icons/Monsters/troll_1.png"
