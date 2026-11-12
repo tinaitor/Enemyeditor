@@ -24,7 +24,16 @@
         {
             var result = baseValue;
             for (int i = 0; i < level; i++)
-                result = result.Multiply(modifier);
+            {
+                var next = result.Multiply(modifier);
+
+                // Multiply отбрасывает дробную часть: 1 * 1.5 = 1. Чтобы у слабых монстров
+                // с модификатором > 1 значение всё равно росло, добавляем минимум 1 за уровень.
+                if (modifier > 1.0 && next.ToString() == result.ToString())
+                    next = result + BigNumber.FromLong(1);
+
+                result = next;
+            }
             return result;
         }
 

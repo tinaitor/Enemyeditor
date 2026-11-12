@@ -6,6 +6,7 @@
       "ImagePath": "icons/Monsters/goblin_1.png"
     },
     "Health": 1,
+    "HealthModifier": 1.5,
     "SpawnChance": 6,
     "GoldReward": 8
   },
@@ -16,6 +17,7 @@
       "ImagePath": "icons/Monsters/skeleton_2.png"
     },
     "Health": 2,
+    "HealthModifier": 1.3,
     "SpawnChance": 3,
     "GoldReward": 20
   },
@@ -26,6 +28,7 @@
       "ImagePath": "icons/Monsters/troll_1.png"
     },
     "Health": 16,
+    "HealthModifier": 1.2,
     "SpawnChance": 1,
     "GoldReward": 67
   }
