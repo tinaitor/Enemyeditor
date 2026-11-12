@@ -7,7 +7,12 @@ namespace Enemyeditor
         private List<CEnemyTemplate> enemies = new List<CEnemyTemplate>();
 
         // Работаем через интерфейс — список не знает, как именно сохраняются данные.
-        private readonly ISaveList<List<CEnemyTemplate>> _serializer = new JsonEnemySaver();
+        private readonly ISaveList<List<CEnemyTemplate>> _serializer;
+
+        public CEnemyList(ISaveList<List<CEnemyTemplate>>? serializer = null)
+        {
+            _serializer = serializer ?? new JsonEnemySaver();
+        }
 
         public void Add(CEnemyTemplate enemy)
         {
