@@ -15,16 +15,23 @@ namespace Enemyeditor
             string raw = jsonDoc.RootElement.GetRawText();
 
             // Старые файлы (до появления типов) не содержат "$type" — считаем их обычными противниками.
-            string type = jsonDoc.RootElement.TryGetProperty("$type", out JsonElement typeElement)
-                ? typeElement.GetString() ?? nameof(CNormalEnemyTemplate)
-                : nameof(CNormalEnemyTemplate);
+            if (jsonDoc.RootElement.ValueKind != JsonValueKind.Object)
+                throw new JsonException("Ожидался объект противника.");
+
+            string type = nameof(CNormalEnemyTemplate);
+            if (jsonDoc.RootElement.TryGetProperty("$type", out JsonElement typeElement))
+            {
+                if (typeElement.ValueKind != JsonValueKind.String)
+                    throw new JsonException("Поле $type должно быть строкой.");
+                type = typeElement.GetString() ?? throw new JsonException("Поле $type не задано.");
+            }
 
             CEnemyTemplate? result = type switch
             {
                 nameof(CNormalEnemyTemplate) => JsonSerializer.Deserialize<CNormalEnemyTemplate>(raw, options),
                 nameof(CArmoredEnemyTemplate) => JsonSerializer.Deserialize<CArmoredEnemyTemplate>(raw, options),
                 nameof(CHealingEnemyTemplate) => JsonSerializer.Deserialize<CHealingEnemyTemplate>(raw, options),
-                _ => throw new NotSupportedException($"Unknown type: {type}")
+                _ => throw new JsonException($"Неизвестный тип противника: {type}")
             };
 
             return result ?? throw new JsonException("Не удалось прочитать противника.");
