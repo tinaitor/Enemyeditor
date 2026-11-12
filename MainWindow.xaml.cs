@@ -15,6 +15,7 @@ namespace Enemyeditor
         public MainWindow()
         {
             InitializeComponent();
+            EnemyTypeComboBox.SelectedIndex = 0;
             ClearSelectedStats();
         }
 
@@ -39,22 +40,50 @@ namespace Enemyeditor
             }
         }
 
+        // Показываем поле особого свойства только у нужного типа
+        private void EnemyTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ArmorPanel == null || HealChancePanel == null) return;
+
+            ArmorPanel.Visibility = EnemyTypeComboBox.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+            HealChancePanel.Visibility = EnemyTypeComboBox.SelectedIndex == 2 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        // Создаём объект нужного наследника в зависимости от выбранного типа
+        private CEnemyTemplate CreateEnemyOfSelectedType()
+        {
+            switch (EnemyTypeComboBox.SelectedIndex)
+            {
+                case 1:
+                    return new CArmoredEnemyTemplate
+                    {
+                        Armor = double.TryParse(ArmorTextBox.Text, out double a) ? a : 0
+                    };
+                case 2:
+                    return new CHealingEnemyTemplate
+                    {
+                        HealChance = double.TryParse(HealChanceTextBox.Text, out double hc) ? hc : 0
+                    };
+                default:
+                    return new CNormalEnemyTemplate();
+            }
+        }
+
         private void AddEnemy_Click(object sender, RoutedEventArgs e)
         {
             if (IconsListBox.SelectedIndex < 0) return;
 
             EnemyIcon icon = iconList.GetIcons()[IconsListBox.SelectedIndex];
 
-            EnemyTemplate enemy = new EnemyTemplate
-            {
-                Name = NameTextBox.Text,
-                Icon = icon,
-                Health = int.TryParse(HealthTextBox.Text, out int h) ? h : 0,
-                GoldReward = long.TryParse(GoldRewardTextBox.Text, out long g) ? g : 0,
-                SpawnChance = double.TryParse(SpawnChanceTextBox.Text, out double sc) && sc > 0 ? sc : 1.0,
-                HealthModifier = double.TryParse(HealthModifierTextBox.Text, out double hm) && hm > 0 ? hm : 1.0,
-                GoldModifier = double.TryParse(GoldModifierTextBox.Text, out double gm) && gm > 0 ? gm : 1.0
-            };
+            // Проверка значений происходит в сеттерах свойств CEnemyTemplate
+            CEnemyTemplate enemy = CreateEnemyOfSelectedType();
+            enemy.Name = NameTextBox.Text;
+            enemy.Icon = icon;
+            enemy.Health = int.TryParse(HealthTextBox.Text, out int h) ? h : 0;
+            enemy.GoldReward = long.TryParse(GoldRewardTextBox.Text, out long g) ? g : 0;
+            enemy.SpawnChance = double.TryParse(SpawnChanceTextBox.Text, out double sc) ? sc : 0;
+            enemy.HealthModifier = double.TryParse(HealthModifierTextBox.Text, out double hm) ? hm : 0;
+            enemy.GoldModifier = double.TryParse(GoldModifierTextBox.Text, out double gm) ? gm : 0;
 
             enemyList.Add(enemy);
             RefreshEnemies();
@@ -62,7 +91,7 @@ namespace Enemyeditor
 
         private void RemoveEnemy_Click(object sender, RoutedEventArgs e)
         {
-            if (EnemiesListBox.SelectedItem is EnemyTemplate enemy)
+            if (EnemiesListBox.SelectedItem is CEnemyTemplate enemy)
             {
                 enemyList.Remove(enemy);
                 RefreshEnemies();
@@ -120,14 +149,16 @@ namespace Enemyeditor
 
         private void EnemiesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (EnemiesListBox.SelectedItem is EnemyTemplate enemy)
+            if (EnemiesListBox.SelectedItem is CEnemyTemplate enemy)
             {
                 SelectedNameText.Text = enemy.Name;
+                SelectedTypeText.Text = $"Тип: {enemy.TypeDisplayName}";
                 SelectedHealthText.Text = $"Здоровье: {enemy.Health}";
                 SelectedGoldRewardText.Text = $"Золото: {enemy.GoldReward}";
                 SelectedSpawnChanceText.Text = $"Шанс (вес): {enemy.SpawnChance}";
                 SelectedHealthModifierText.Text = $"×HP за уровень: {enemy.HealthModifier}";
                 SelectedGoldModifierText.Text = $"×Золото за уровень: {enemy.GoldModifier}";
+                SelectedSpecialText.Text = enemy.SpecialDescription;
 
                 if (!string.IsNullOrEmpty(enemy.Icon.ImagePath))
                 {
@@ -149,7 +180,7 @@ namespace Enemyeditor
 
         private void OpenImage_Click(object sender, RoutedEventArgs e)
         {
-            if (EnemiesListBox.SelectedItem is EnemyTemplate enemy &&
+            if (EnemiesListBox.SelectedItem is CEnemyTemplate enemy &&
                 !string.IsNullOrEmpty(enemy.Icon.ImagePath))
             {
                 System.Diagnostics.Process.Start(
@@ -164,11 +195,13 @@ namespace Enemyeditor
         private void ClearSelectedStats()
         {
             SelectedNameText.Text = "";
+            SelectedTypeText.Text = "";
             SelectedHealthText.Text = "";
             SelectedGoldRewardText.Text = "";
             SelectedSpawnChanceText.Text = "";
             SelectedHealthModifierText.Text = "";
             SelectedGoldModifierText.Text = "";
+            SelectedSpecialText.Text = "";
             SelectedIconImage.Source = null;
             OpenImageButton.IsEnabled = false;
         }

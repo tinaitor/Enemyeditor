@@ -1,54 +1,37 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
 
 namespace Enemyeditor
 {
     public class CEnemyList
     {
-        private List<EnemyTemplate> enemies = new List<EnemyTemplate>();
+        private List<CEnemyTemplate> enemies = new List<CEnemyTemplate>();
 
-        public void Add(EnemyTemplate enemy)
+        // Работаем через интерфейс — список не знает, как именно сохраняются данные.
+        private readonly ISaveList<List<CEnemyTemplate>> _serializer = new JsonEnemySaver();
+
+        public void Add(CEnemyTemplate enemy)
         {
             enemies.Add(enemy);
         }
 
-        public void Remove(EnemyTemplate enemy)
+        public void Remove(CEnemyTemplate enemy)
         {
             enemies.Remove(enemy);
         }
 
-        public List<EnemyTemplate> GetAll()
+        public List<CEnemyTemplate> GetAll()
         {
             return enemies;
         }
 
         public void SaveToJson(string path)
         {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-
-            string json = JsonSerializer.Serialize(enemies, options);
-            File.WriteAllText(path, json);
+            _serializer.Save(enemies, path);
         }
 
         public void LoadFromJson(string path)
         {
-            if (!File.Exists(path))
-            {
-                throw new FileNotFoundException("JSON-файл не найден.", path);
-            }
-
-            string json = File.ReadAllText(path);
-
-             
-             
-            List<EnemyTemplate> loaded =
-                JsonSerializer.Deserialize<List<EnemyTemplate>>(json)
-                ?? new List<EnemyTemplate>();
-
+            List<CEnemyTemplate> loaded = _serializer.Load(path);
             enemies.Clear();
             enemies.AddRange(loaded);
         }
