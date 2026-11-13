@@ -156,5 +156,13 @@ namespace ClickerGame
             r.TrimLeadingZeros();
             return r;
         }
+
+        public static BigNumber Zero { get; } = new BigNumber("0");
+
+        public static bool operator <=(BigNumber a, BigNumber b) => a.CompareTo(b) <= 0;
+        public static bool operator >=(BigNumber a, BigNumber b) => a.CompareTo(b) >= 0;
+        public static bool operator <(BigNumber a, BigNumber b) => a.CompareTo(b) < 0;
+        public static bool operator >(BigNumber a, BigNumber b) => a.CompareTo(b) > 0;
+
     }
 }
