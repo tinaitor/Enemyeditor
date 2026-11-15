@@ -34,6 +34,10 @@
   },
   {
     "Name": "Рыцарь",
+    "Icon": {
+      "Name": "knight.png",
+      "ImagePath": "icons/Monsters/goblin_8.png"
+    },
     "Health": 20,
     "HealthModifier": 1.2,
     "SpawnChance": 1,
@@ -41,5 +45,6 @@
     "Armor": 15,
     "Type": "Armored"
   }
+
 
 ]
