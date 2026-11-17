@@ -9,5 +9,9 @@ namespace ClickerGame
         public double HealthModifier { get; set; } = 1.0;
         public double GoldModifier { get; set; } = 1.0;
         public EnemyIcon Icon { get; set; } = new EnemyIcon();
+        public string Type { get; set; } = "Normal";
+        public long Armor { get; set; } = 0;
+
+
     }
 }

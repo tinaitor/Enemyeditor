@@ -18,8 +18,9 @@ namespace WpfApp48
         private readonly DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
         private readonly Stopwatch clock = Stopwatch.StartNew();
         private TimeSpan previousTick;
-        private Enemy? currentEnemy;
-        private Enemy? displayedEnemy;
+        private IEnemy? currentEnemy;
+        private IEnemy? displayedEnemy;
+
 
         public MainWindow()
         {
@@ -31,11 +32,38 @@ namespace WpfApp48
             UpdateUI();
         }
 
-        private Enemy? CreateEnemyFromRandomTemplate()
+        private IEnemy? CreateEnemyFromRandomTemplate()
         {
             var template = repository.GetRandomTemplate();
-            return template == null ? null : new Enemy(template, player.KillCount);
+            if (template == null) return null;
+
+            int level = player.KillCount;
+            switch (template.Type)
+            {
+                case "Normal":
+                    return new CNormalEnemy(template.Name,
+                        EnemyUtils.Scale(BigNumber.FromLong(template.Health), template.HealthModifier, level),
+                        EnemyUtils.Scale(BigNumber.FromLong(template.GoldReward), template.GoldModifier, level),
+                        BigNumber.FromLong(template.GoldReward),
+                        template.Icon?.ImagePath ?? "");
+                case "Armored":
+                    return new CArmoredEnemy(template.Name,
+                        EnemyUtils.Scale(BigNumber.FromLong(template.Health), template.HealthModifier, level),
+                        EnemyUtils.Scale(BigNumber.FromLong(template.GoldReward), template.GoldModifier, level),
+                        BigNumber.FromLong(template.GoldReward),
+                        template.Icon?.ImagePath ?? "",
+                        BigNumber.FromLong(template.Armor));
+                default:
+                    return new CNormalEnemy(template.Name,
+                        EnemyUtils.Scale(BigNumber.FromLong(template.Health), template.HealthModifier, level),
+                        EnemyUtils.Scale(BigNumber.FromLong(template.GoldReward), template.GoldModifier, level),
+                        BigNumber.FromLong(template.GoldReward),
+                        template.Icon?.ImagePath ?? "");
+            }
         }
+
+
+
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
@@ -58,7 +86,9 @@ namespace WpfApp48
             }
 
             if (currentEnemy == null || !player.TryAttack()) return;
-            bool isDefeated = currentEnemy.TakeDamage(player.AttackDamage);
+            currentEnemy.TakeDamage(player.AttackDamage);
+            bool isDefeated = currentEnemy.Health.CompareTo(BigNumber.Zero) == 0;
+
             if (isDefeated)
             {
                 player.AddGold(currentEnemy.Reward);
