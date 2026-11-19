@@ -21,11 +21,11 @@ namespace WpfApp48
         private IEnemy? currentEnemy;
         private IEnemy? displayedEnemy;
 
-
         public MainWindow()
         {
             InitializeComponent();
-            repository.LoadFromJson(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "enemies.json"));
+            repository.LoadFromJson(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "enemies.json"));
             currentEnemy = CreateEnemyFromRandomTemplate();
             timer.Tick += Timer_Tick;
             timer.Start();
@@ -38,32 +38,40 @@ namespace WpfApp48
             if (template == null) return null;
 
             int level = player.KillCount;
-            switch (template.Type)
+            BigNumber hp = EnemyUtils.Scale(
+                BigNumber.FromLong(template.Health),
+                template.HealthModifier, level);
+            BigNumber gold = EnemyUtils.Scale(
+                BigNumber.FromLong(template.GoldReward),
+                template.GoldModifier, level);
+            BigNumber reward = BigNumber.FromLong(template.GoldReward);
+            string icon = template.Icon?.ImagePath ?? "";
+
+            try
             {
-                case "Normal":
-                    return new CNormalEnemy(template.Name,
-                        EnemyUtils.Scale(BigNumber.FromLong(template.Health), template.HealthModifier, level),
-                        EnemyUtils.Scale(BigNumber.FromLong(template.GoldReward), template.GoldModifier, level),
-                        BigNumber.FromLong(template.GoldReward),
-                        template.Icon?.ImagePath ?? "");
-                case "Armored":
-                    return new CArmoredEnemy(template.Name,
-                        EnemyUtils.Scale(BigNumber.FromLong(template.Health), template.HealthModifier, level),
-                        EnemyUtils.Scale(BigNumber.FromLong(template.GoldReward), template.GoldModifier, level),
-                        BigNumber.FromLong(template.GoldReward),
-                        template.Icon?.ImagePath ?? "",
-                        BigNumber.FromLong(template.Armor));
-                default:
-                    return new CNormalEnemy(template.Name,
-                        EnemyUtils.Scale(BigNumber.FromLong(template.Health), template.HealthModifier, level),
-                        EnemyUtils.Scale(BigNumber.FromLong(template.GoldReward), template.GoldModifier, level),
-                        BigNumber.FromLong(template.GoldReward),
-                        template.Icon?.ImagePath ?? "");
+                return template switch
+                {
+                    CArmoredEnemyTemplate a => EnemyFactory.Create(
+                        nameof(CArmoredEnemy),
+                        a.Name, hp, gold, reward, icon,
+                        BigNumber.FromLong((long)a.Armor)),
+
+                    CHealingEnemyTemplate h => EnemyFactory.Create(
+                        nameof(CHealingEnemy),
+                        h.Name, hp, gold, reward, icon,
+                        h.HealChance),
+
+                    _ => EnemyFactory.Create(
+                        nameof(CNormalEnemy),
+                        template.Name, hp, gold, reward, icon)
+                };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось создать противника: {ex.Message}");
+                return null;
             }
         }
-
-
-
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
@@ -120,7 +128,6 @@ namespace WpfApp48
                 UpdateUI();
         }
 
-
         private void UpdateUI()
         {
             GoldText.Text = "Золото: " + player.Gold;
@@ -136,8 +143,8 @@ namespace WpfApp48
             UpgradeCooldownButton.Content = "Ускорить атаку (" + player.CooldownUpgradeCost + " золота)";
             UpgradeCooldownButton.IsEnabled = player.Cooldown > 0.200001 && player.Gold.CompareTo(player.CooldownUpgradeCost) >= 0;
             UpgradeGoldSphereButton.Content =
-            $"Улучшить золотую сферу, ур. {player.GoldBonusLevel} " +
-            $"({player.GoldBonusUpgradeCost} золота)";
+                $"Улучшить золотую сферу, ур. {player.GoldBonusLevel} " +
+                $"({player.GoldBonusUpgradeCost} золота)";
 
             UpgradeGoldSphereButton.IsEnabled =
                 player.Gold.CompareTo(player.GoldBonusUpgradeCost) >= 0 &&
@@ -150,7 +157,6 @@ namespace WpfApp48
             UpgradeCooldownSphereButton.IsEnabled =
                 player.CanUpgradeCooldownSphere &&
                 player.Gold.CompareTo(player.CooldownSphereUpgradeCost) >= 0;
-
 
             BonusCanvas.Children.Clear();
             foreach (CCollectable sphere in bonuses.Objects)

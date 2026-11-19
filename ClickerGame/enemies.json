@@ -1,50 +1,69 @@
 [
   {
+    "$type": "CNormalEnemyTemplate",
     "Name": "Валентин",
     "Icon": {
       "Name": "goblin_1.png",
       "ImagePath": "icons/Monsters/goblin_1.png"
     },
     "Health": 1,
-    "HealthModifier": 1.5,
+    "GoldReward": 8,
     "SpawnChance": 6,
-    "GoldReward": 8
+    "HealthModifier": 1.5,
+    "GoldModifier": 1.0
   },
   {
+    "$type": "CNormalEnemyTemplate",
     "Name": "Томарка",
     "Icon": {
       "Name": "skeleton_2.png",
       "ImagePath": "icons/Monsters/skeleton_2.png"
     },
     "Health": 2,
-    "HealthModifier": 1.3,
+    "GoldReward": 20,
     "SpawnChance": 3,
-    "GoldReward": 20
+    "HealthModifier": 1.3,
+    "GoldModifier": 1.0
   },
   {
+    "$type": "CNormalEnemyTemplate",
     "Name": "Амбасатор",
     "Icon": {
       "Name": "troll_1.png",
       "ImagePath": "icons/Monsters/troll_1.png"
     },
     "Health": 16,
-    "HealthModifier": 1.2,
+    "GoldReward": 67,
     "SpawnChance": 1,
-    "GoldReward": 67
+    "HealthModifier": 1.2,
+    "GoldModifier": 1.0
   },
   {
+    "$type": "CArmoredEnemyTemplate",
     "Name": "Рыцарь",
     "Icon": {
       "Name": "knight.png",
       "ImagePath": "icons/Monsters/goblin_8.png"
     },
     "Health": 20,
-    "HealthModifier": 1.2,
-    "SpawnChance": 1,
     "GoldReward": 100,
-    "Armor": 15,
-    "Type": "Armored"
+    "SpawnChance": 1,
+    "HealthModifier": 1.2,
+    "GoldModifier": 1.0,
+    "Armor": 15
+  },
+  {
+    "$type": "CHealingEnemyTemplate",
+    "Name": "Шаман",
+    "Icon": {
+      "Name": "goblin_1.png",
+      "ImagePath": "icons/Monsters/goblin_1.png"
+    },
+    "Health": 10,
+    "GoldReward": 40,
+    "SpawnChance": 2,
+    "HealthModifier": 1.2,
+    "GoldModifier": 1.0,
+    "HealChance": 25
   }
-
-
 ]

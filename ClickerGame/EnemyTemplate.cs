@@ -1,17 +1,25 @@
 namespace ClickerGame
 {
-    public class EnemyTemplate
+    public abstract class EnemyTemplate
     {
-        public string Name { get; set; } = "";
-        public long Health { get; set; }
+        public string Name { get; set; } = "unknown";
+        public EnemyIcon Icon { get; set; } = new();
+        public int Health { get; set; } = 100;
         public long GoldReward { get; set; }
         public double SpawnChance { get; set; } = 1.0;
         public double HealthModifier { get; set; } = 1.0;
         public double GoldModifier { get; set; } = 1.0;
-        public EnemyIcon Icon { get; set; } = new EnemyIcon();
-        public string Type { get; set; } = "Normal";
-        public long Armor { get; set; } = 0;
+    }
 
+    public class CNormalEnemyTemplate : EnemyTemplate { }
 
+    public class CArmoredEnemyTemplate : EnemyTemplate
+    {
+        public double Armor { get; set; } = 25;
+    }
+
+    public class CHealingEnemyTemplate : EnemyTemplate
+    {
+        public double HealChance { get; set; } = 10;
     }
 }
