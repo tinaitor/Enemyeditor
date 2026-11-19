@@ -15,7 +15,7 @@ namespace ClickerGame
 
     public class CArmoredEnemyTemplate : EnemyTemplate
     {
-        public double Armor { get; set; } = 25;
+        public double Armor { get; set; } = 2;
     }
 
     public class CHealingEnemyTemplate : EnemyTemplate

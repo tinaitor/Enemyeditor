@@ -15,13 +15,12 @@ namespace WpfApp48
     {
         private readonly EnemyRepository repository = new EnemyRepository();
         private readonly PlayerSaver playerSaver = new PlayerSaver();
-
-        // player не readonly — при загрузке подменяем его на сохранённого
-        private Player player = new Player();
-
         private readonly CController bonuses = new CController();
         private readonly DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
         private readonly Stopwatch clock = Stopwatch.StartNew();
+        private readonly Random rng = new();
+
+        private Player player = new Player();
         private TimeSpan previousTick;
         private IEnemy? currentEnemy;
         private IEnemy? displayedEnemy;
@@ -107,8 +106,25 @@ namespace WpfApp48
             }
 
             if (currentEnemy == null || !player.TryAttack()) return;
-            currentEnemy.TakeDamage(player.AttackDamage);
-            bool isDefeated = currentEnemy.Health.CompareTo(BigNumber.Zero) == 0;
+
+            bool isDefeated = false;
+            double doubleChance = player.DoubleStrikeChance;
+
+            if (doubleChance > 0 && rng.NextDouble() < doubleChance)
+            {
+                currentEnemy.TakeDamage(player.AttackDamage);
+                isDefeated = currentEnemy.Health.CompareTo(BigNumber.Zero) == 0;
+                if (!isDefeated)
+                {
+                    currentEnemy.TakeDamage(player.AttackDamage);
+                    isDefeated = currentEnemy.Health.CompareTo(BigNumber.Zero) == 0;
+                }
+            }
+            else
+            {
+                currentEnemy.TakeDamage(player.AttackDamage);
+                isDefeated = currentEnemy.Health.CompareTo(BigNumber.Zero) == 0;
+            }
 
             if (isDefeated)
             {
@@ -131,14 +147,12 @@ namespace WpfApp48
 
         private void UpgradeGoldSphereButton_Click(object sender, RoutedEventArgs e)
         {
-            if (player.TryUpgradeGoldSphere())
-                UpdateUI();
+            if (player.TryUpgradeGoldSphere()) UpdateUI();
         }
 
         private void UpgradeCooldownSphereButton_Click(object sender, RoutedEventArgs e)
         {
-            if (player.TryUpgradeCooldownSphere())
-                UpdateUI();
+            if (player.TryUpgradeCooldownSphere()) UpdateUI();
         }
 
         private void Window_Closing(object? sender, CancelEventArgs e)
@@ -152,27 +166,39 @@ namespace WpfApp48
             GoldText.Text = "Золото: " + player.Gold;
             DamageText.Text = "Урон: " + player.AttackDamage;
             CooldownText.Text = player.CanAttack
-                ? $"Атака готова (перезарядка {player.Cooldown:F1} с)"
-                : $"Перезарядка: {player.CooldownLeft:F1} с";
+                ? $"Атака готова (кулдаун {player.Cooldown:F2} с)"
+                : $"Перезарядка: {player.CooldownLeft:F2} с";
             BoostText.Text = player.DamageBoostLeft > 0
-                ? $"Усиление урона: {player.DamageBoostLeft:F1} с"
+                ? $"Усиление урона: x2 ({player.DamageBoostLeft:F1} с)"
                 : "Усиление урона: нет";
-            UpgradeDamageButton.Content = "Улучшить урон (" + player.UpgradeCost + " золота)";
-            UpgradeDamageButton.IsEnabled = player.Gold.CompareTo(player.UpgradeCost) >= 0;
-            UpgradeCooldownButton.Content = "Ускорить атаку (" + player.CooldownUpgradeCost + " золота)";
-            UpgradeCooldownButton.IsEnabled = player.Cooldown > 0.200001 && player.Gold.CompareTo(player.CooldownUpgradeCost) >= 0;
+            CooldownBoostText.Text = player.CooldownBoostLeft > 0
+                ? $"Усиление скорости: x2 ({player.CooldownBoostLeft:F1} с)"
+                : "Усиление скорости: нет";
+            DoubleStrikeText.Text = player.DoubleStrikeChance > 0
+                ? $"Шанс двойного клика: {player.DoubleStrikeChance * 100:F1}%"
+                : "Шанс двойного клика: 0%";
+
+            UpgradeDamageButton.Content =
+                $"Улучшить урон ({player.UpgradeCost} золота)";
+            UpgradeDamageButton.IsEnabled =
+                player.Gold.CompareTo(player.UpgradeCost) >= 0;
+
+            UpgradeCooldownButton.Content =
+                $"Ускорить атаку (сейчас {player.BaseCooldown:F2} с, {player.CooldownUpgradeCost} золота)";
+            UpgradeCooldownButton.IsEnabled =
+                player.CanUpgradeCooldown &&
+                player.Gold.CompareTo(player.CooldownUpgradeCost) >= 0;
+
             UpgradeGoldSphereButton.Content =
                 $"Улучшить золотую сферу, ур. {player.GoldBonusLevel} " +
                 $"({player.GoldBonusUpgradeCost} золота)";
-
             UpgradeGoldSphereButton.IsEnabled =
                 player.Gold.CompareTo(player.GoldBonusUpgradeCost) >= 0 &&
                 player.GoldBonusLevel < 20;
 
             UpgradeCooldownSphereButton.Content =
-                $"Усилить голубую сферу, ур. {player.CooldownSphereLevel} " +
+                $"Улучшить шанс двойного клика, ур. {player.CooldownSphereLevel} " +
                 $"({player.CooldownSphereUpgradeCost} золота)";
-
             UpgradeCooldownSphereButton.IsEnabled =
                 player.CanUpgradeCooldownSphere &&
                 player.Gold.CompareTo(player.CooldownSphereUpgradeCost) >= 0;

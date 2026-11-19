@@ -50,7 +50,7 @@
     "SpawnChance": 1,
     "HealthModifier": 1.2,
     "GoldModifier": 1.0,
-    "Armor": 15
+    "Armor": 4
   },
   {
     "$type": "CHealingEnemyTemplate",
