@@ -1,5 +1,6 @@
 using ClickerGame;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,11 @@ namespace WpfApp48
     public partial class MainWindow : Window
     {
         private readonly EnemyRepository repository = new EnemyRepository();
-        private readonly Player player = new Player();
+        private readonly PlayerSaver playerSaver = new PlayerSaver();
+
+        // player не readonly — при загрузке подменяем его на сохранённого
+        private Player player = new Player();
+
         private readonly CController bonuses = new CController();
         private readonly DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
         private readonly Stopwatch clock = Stopwatch.StartNew();
@@ -21,11 +26,19 @@ namespace WpfApp48
         private IEnemy? currentEnemy;
         private IEnemy? displayedEnemy;
 
+        private string PlayerSavePath =>
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "player.json");
+
         public MainWindow()
         {
             InitializeComponent();
+
             repository.LoadFromJson(
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "enemies.json"));
+
+            try { player = playerSaver.Load(PlayerSavePath); }
+            catch { player = new Player(); }
+
             currentEnemy = CreateEnemyFromRandomTemplate();
             timer.Tick += Timer_Tick;
             timer.Start();
@@ -126,6 +139,12 @@ namespace WpfApp48
         {
             if (player.TryUpgradeCooldownSphere())
                 UpdateUI();
+        }
+
+        private void Window_Closing(object? sender, CancelEventArgs e)
+        {
+            try { playerSaver.Save(player, PlayerSavePath); }
+            catch { /* не мешаем закрытию */ }
         }
 
         private void UpdateUI()

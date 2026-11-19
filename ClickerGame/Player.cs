@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ClickerGame
 {
     public class Player
@@ -16,31 +18,41 @@ namespace ClickerGame
 
         private double damageBoostLeft;
 
-        public BigNumber Gold { get; private set; }
-        public BigNumber Damage { get; private set; }
-        public BigNumber UpgradeCost { get; private set; }
-        public BigNumber CooldownUpgradeCost { get; private set; }
+        [JsonInclude] public BigNumber Gold { get; private set; }
+        [JsonInclude] public BigNumber Damage { get; private set; }
+        [JsonInclude] public BigNumber UpgradeCost { get; private set; }
+        [JsonInclude] public BigNumber CooldownUpgradeCost { get; private set; }
 
-        public BigNumber GoldBonusUpgradeCost { get; private set; }
-        public BigNumber CooldownSphereUpgradeCost { get; private set; }
+        [JsonInclude] public BigNumber GoldBonusUpgradeCost { get; private set; }
+        [JsonInclude] public BigNumber CooldownSphereUpgradeCost { get; private set; }
 
-        public int DamageLevel { get; private set; }
-        public int KillCount { get; private set; }
-        public int GoldBonusLevel { get; private set; }
-        public int CooldownSphereLevel { get; private set; }
+        [JsonInclude] public int DamageLevel { get; private set; }
+        [JsonInclude] public int KillCount { get; private set; }
+        [JsonInclude] public int GoldBonusLevel { get; private set; }
+        [JsonInclude] public int CooldownSphereLevel { get; private set; }
 
-        public double Cooldown => attackTimer.Duration;
-        public double CooldownLeft => attackTimer.Remaining;
-        public bool CanAttack => attackTimer.IsReady;
-        public double DamageBoostLeft => damageBoostLeft;
+        // Cooldown был только get Ч добавили сеттер, который прокидывает значение в таймер
+        [JsonInclude]
+        public double Cooldown
+        {
+            get => attackTimer.Duration;
+            private set => attackTimer.SetDuration(value);
+        }
 
+        [JsonIgnore] public double CooldownLeft => attackTimer.Remaining;
+        [JsonIgnore] public bool CanAttack => attackTimer.IsReady;
+        [JsonIgnore] public double DamageBoostLeft => damageBoostLeft;
+
+        [JsonIgnore]
         public double CooldownSphereReduction =>
             0.1 + 0.05 * CooldownSphereLevel;
 
+        [JsonIgnore]
         public bool CanUpgradeCooldownSphere =>
             CooldownSphereLevel < MaxBonusUpgradeLevel &&
             Cooldown > MinimumCooldown + 0.000001;
 
+        [JsonIgnore]
         public BigNumber AttackDamage =>
             damageBoostLeft > 0 ? Damage.Multiply(2) : Damage;
 
