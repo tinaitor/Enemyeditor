@@ -2,7 +2,6 @@ using System;
 
 namespace ClickerGame
 {
-    // Adapted from TimedClicker: the player owns the timer, not the window.
     public sealed class CCountdownTimer
     {
         private double elapsed;
@@ -12,12 +11,18 @@ namespace ClickerGame
 
         public CCountdownTimer(double duration)
         {
-            Duration = duration;
-            elapsed = duration;
+            Duration = Math.Max(0.01, duration);
+            elapsed = Duration;
         }
 
         public void Start() => elapsed = 0;
         public void Update(double seconds) => elapsed += Math.Max(0, seconds);
-        public void SetDuration(double duration) => Duration = Math.Max(0.1, duration);
+        public void SetDuration(double duration)
+        {
+            duration = Math.Max(0.01, duration);
+            double progress = Duration > 0 ? Math.Clamp(elapsed / Duration, 0, 1) : 1;
+            Duration = duration;
+            elapsed = progress * duration;
+        }
     }
 }

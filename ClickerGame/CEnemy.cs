@@ -3,7 +3,7 @@
     public abstract class CEnemy : IEnemy
     {
         public string Name { get; }
-        public BigNumber Health { get; private set; }
+        public BigNumber Health { get; protected set; }
         public BigNumber Gold { get; }
         public BigNumber Reward { get; }
         public string ImagePath { get; }

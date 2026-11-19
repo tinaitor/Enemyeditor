@@ -1,3 +1,6 @@
+using System;
+using System.Text.Json.Serialization;
+
 namespace ClickerGame
 {
     public class Player
@@ -6,41 +9,77 @@ namespace ClickerGame
         private const long StartUpgradeCost = 100;
         private const double DamageModifier = 1.2;
         private const double UpgradeModifier = 1.2;
+
         private const double InitialCooldown = 0.8;
+
+        private const double MinimumCooldown = 0.05;
+        private const double CooldownUpgradeFactor = 0.85;
+
         private const long StartCooldownUpgradeCost = 60;
-        private const double MinimumCooldown = 0.2;
+
+        private const double DoubleStrikeBaseResidual = 0.9;
         private const int MaxBonusUpgradeLevel = 20;
 
         private readonly CCountdownTimer attackTimer =
             new CCountdownTimer(InitialCooldown);
 
+        private double baseCooldown = InitialCooldown;
         private double damageBoostLeft;
+        private double cooldownBoostLeft;
 
-        public BigNumber Gold { get; private set; }
-        public BigNumber Damage { get; private set; }
-        public BigNumber UpgradeCost { get; private set; }
-        public BigNumber CooldownUpgradeCost { get; private set; }
+        [JsonInclude] public BigNumber Gold { get; private set; }
+        [JsonInclude] public BigNumber Damage { get; private set; }
+        [JsonInclude] public BigNumber UpgradeCost { get; private set; }
+        [JsonInclude] public BigNumber CooldownUpgradeCost { get; private set; }
 
-        public BigNumber GoldBonusUpgradeCost { get; private set; }
-        public BigNumber CooldownSphereUpgradeCost { get; private set; }
+        [JsonInclude] public BigNumber GoldBonusUpgradeCost { get; private set; }
+        [JsonInclude] public BigNumber CooldownSphereUpgradeCost { get; private set; }
 
-        public int DamageLevel { get; private set; }
-        public int KillCount { get; private set; }
-        public int GoldBonusLevel { get; private set; }
-        public int CooldownSphereLevel { get; private set; }
+        [JsonInclude] public int DamageLevel { get; private set; }
+        [JsonInclude] public int KillCount { get; private set; }
+        [JsonInclude] public int GoldBonusLevel { get; private set; }
+        [JsonInclude] public int CooldownSphereLevel { get; private set; }
 
-        public double Cooldown => attackTimer.Duration;
-        public double CooldownLeft => attackTimer.Remaining;
-        public bool CanAttack => attackTimer.IsReady;
-        public double DamageBoostLeft => damageBoostLeft;
+        [JsonInclude]
+        public double BaseCooldown
+        {
+            get => baseCooldown;
+            private set
+            {
+                baseCooldown = Math.Max(MinimumCooldown, value);
+                attackTimer.SetDuration(baseCooldown);
+            }
+        }
 
-        public double CooldownSphereReduction =>
-            0.1 + 0.05 * CooldownSphereLevel;
+        [JsonIgnore]
+        public double Cooldown =>
+            cooldownBoostLeft > 0 ? baseCooldown * 0.5 : baseCooldown;
 
+        [JsonIgnore]
+        public double CooldownLeft =>
+            cooldownBoostLeft > 0
+                ? Math.Max(0, attackTimer.Remaining / 2)
+                : Math.Max(0, attackTimer.Remaining);
+
+        [JsonIgnore] public bool CanAttack => attackTimer.IsReady;
+        [JsonIgnore] public double DamageBoostLeft => damageBoostLeft;
+        [JsonIgnore] public double CooldownBoostLeft => cooldownBoostLeft;
+
+        [JsonIgnore]
+        public bool CanUpgradeCooldown =>
+            baseCooldown > MinimumCooldown + 0.0001;
+
+        [JsonIgnore]
         public bool CanUpgradeCooldownSphere =>
-            CooldownSphereLevel < MaxBonusUpgradeLevel &&
-            Cooldown > MinimumCooldown + 0.000001;
+            CooldownSphereLevel < MaxBonusUpgradeLevel;
 
+        [JsonIgnore]
+        public double DoubleStrikeChance =>
+            CooldownSphereLevel == 0
+                ? 0
+                : 1.0 - Math.Pow(DoubleStrikeBaseResidual, CooldownSphereLevel);
+
+        [JsonIgnore]
         public BigNumber AttackDamage =>
             damageBoostLeft > 0 ? Damage.Multiply(2) : Damage;
 
@@ -62,32 +101,27 @@ namespace ClickerGame
 
         public void Update(double delta)
         {
+            attackTimer.SetDuration(Cooldown);
             attackTimer.Update(delta);
-            damageBoostLeft =
-                System.Math.Max(0, damageBoostLeft - delta);
+            damageBoostLeft = Math.Max(0, damageBoostLeft - delta);
+            cooldownBoostLeft = Math.Max(0, cooldownBoostLeft - delta);
         }
 
         public bool TryAttack()
         {
-            if (!CanAttack)
-                return false;
-
+            if (!CanAttack) return false;
             attackTimer.Start();
             return true;
         }
 
-        public void ReduceCooldown(double seconds)
-        {
-            attackTimer.SetDuration(
-                System.Math.Max(
-                    MinimumCooldown,
-                    System.Math.Round(Cooldown - seconds, 1)));
-        }
-
         public void ActivateDamageBoost(double seconds)
         {
-            damageBoostLeft =
-                System.Math.Max(damageBoostLeft, seconds);
+            damageBoostLeft = Math.Max(damageBoostLeft, seconds);
+        }
+
+        public void ActivateCooldownBoost(double seconds)
+        {
+            cooldownBoostLeft = Math.Max(cooldownBoostLeft, seconds);
         }
 
         public void AddGold(BigNumber amount)
@@ -103,29 +137,19 @@ namespace ClickerGame
         public BigNumber GetGoldSphereReward()
         {
             long baseReward = 50 + 10L * KillCount;
-            double multiplier = System.Math.Pow(1.5, GoldBonusLevel);
-
+            double multiplier = Math.Pow(1.5, GoldBonusLevel);
             return BigNumber.FromLong(baseReward).Multiply(multiplier);
-        }
-
-        public void ApplyCooldownSphere()
-        {
-            ReduceCooldown(CooldownSphereReduction);
         }
 
         public bool TryUpgradeGoldSphere()
         {
             if (GoldBonusLevel >= MaxBonusUpgradeLevel ||
                 Gold.CompareTo(GoldBonusUpgradeCost) < 0)
-            {
                 return false;
-            }
 
             Gold = Gold - GoldBonusUpgradeCost;
             GoldBonusLevel++;
-            GoldBonusUpgradeCost =
-                GoldBonusUpgradeCost.Multiply(1.7);
-
+            GoldBonusUpgradeCost = GoldBonusUpgradeCost.Multiply(1.7);
             return true;
         }
 
@@ -133,31 +157,26 @@ namespace ClickerGame
         {
             if (!CanUpgradeCooldownSphere ||
                 Gold.CompareTo(CooldownSphereUpgradeCost) < 0)
-            {
                 return false;
-            }
 
             Gold = Gold - CooldownSphereUpgradeCost;
             CooldownSphereLevel++;
-            CooldownSphereUpgradeCost =
-                CooldownSphereUpgradeCost.Multiply(1.7);
-
+            CooldownSphereUpgradeCost = CooldownSphereUpgradeCost.Multiply(1.7);
             return true;
         }
 
         public bool TryUpgradeCooldown()
         {
-            if (Cooldown <= MinimumCooldown + 0.000001 ||
+            if (!CanUpgradeCooldown ||
                 Gold.CompareTo(CooldownUpgradeCost) < 0)
-            {
                 return false;
-            }
 
             Gold = Gold - CooldownUpgradeCost;
-            ReduceCooldown(0.1);
-            CooldownUpgradeCost =
-                CooldownUpgradeCost.Multiply(1.5);
 
+            double remaining = baseCooldown - MinimumCooldown;
+            BaseCooldown = MinimumCooldown + remaining * CooldownUpgradeFactor;
+
+            CooldownUpgradeCost = CooldownUpgradeCost.Multiply(1.5);
             return true;
         }
 
@@ -167,18 +186,15 @@ namespace ClickerGame
                 return false;
 
             BigNumber increasedDamage = Damage.Multiply(DamageModifier);
-
             if (increasedDamage.CompareTo(Damage) <= 0)
                 increasedDamage = Damage + BigNumber.FromLong(1);
 
-            BigNumber nextCost =
-                UpgradeCost.Multiply(UpgradeModifier * DamageLevel);
+            BigNumber nextCost = UpgradeCost.Multiply(UpgradeModifier);
 
             Gold = Gold - UpgradeCost;
             Damage = increasedDamage;
             UpgradeCost = nextCost;
             DamageLevel++;
-
             return true;
         }
     }
