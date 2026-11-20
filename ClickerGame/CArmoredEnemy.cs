@@ -12,11 +12,17 @@
 
         public override void TakeDamage(BigNumber damage)
         {
-            BigNumber effective = damage - Armor;
-            if (effective.CompareTo(BigNumber.Zero) <= 0)
+            BigNumber effective;
+            if (damage.CompareTo(Armor) >= 0)
+            {
+                effective = damage - Armor;
+            }
+            else
+            {
                 effective = new BigNumber("1");
-
+            }
             base.TakeDamage(effective);
+
         }
     }
 }

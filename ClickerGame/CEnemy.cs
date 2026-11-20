@@ -21,9 +21,15 @@
         {
             if (damage.CompareTo(BigNumber.Zero) <= 0) return;
 
-            Health = Health - damage;
-            if (Health.CompareTo(BigNumber.Zero) < 0)
+            if (damage.CompareTo(Health) >= 0)          
+            {
                 Health = BigNumber.Zero;
+            }
+            else
+            {
+                Health = Health - damage;                
+            }
         }
+
     }
 }
