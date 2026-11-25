@@ -21,21 +21,34 @@ namespace TimedClicker
         double cooldown;
         CPlayer player;
 
-        public CController(double spawnRate, double startTime, double gameTime, double cooldown, Size sceneSize)
+        // События: контроллер только сообщает, что объект появился/исчез,
+        // а как это показать на экране — решает подписчик (окно)
+        public event ControllerEventHandler? addObject;
+        public event ControllerEventHandler? removeObject;
+
+        public CController(double spawnRate, double gameTime, double cooldown)
         {
             rng = new Random();
             objects = new List<CCollectable>();
             this.spawnRate = spawnRate;
-            time = startTime;
             this.gameTime = gameTime;
             this.cooldown = cooldown;
-            this.sceneSize = sceneSize;
-            elapsedTime = 0;
-            points = 0;
             minLifetime = 1;
             maxLifetime = 5;
             minSpriteSize = 10;
             maxSpriteSize = 20;
+            player = new CPlayer(cooldown);
+        }
+
+        // Начать новую игру: сбросить состояние и убрать оставшиеся объекты
+        public void start(Size sceneSize)
+        {
+            this.sceneSize = sceneSize;
+            for (int i = objects.Count - 1; i >= 0; i--)
+                deleteObject(i);
+            time = spawnRate;
+            elapsedTime = 0;
+            points = 0;
             player = new CPlayer(cooldown);
         }
 
@@ -62,11 +75,22 @@ namespace TimedClicker
             double y = rng.NextDouble() * (sceneSize.Height - size);
             Point pos = new Point(x, y);
 
+            CCollectable obj;
             double roll = rng.NextDouble();
             if (roll < 0.8)
-                objects.Add(new CPointGiver(pos, size, lifetime));
+                obj = new CPointGiver(pos, size, lifetime);
             else
-                objects.Add(new CCooldownReducer(pos, size, lifetime, 0.05));
+                obj = new CCooldownReducer(pos, size, lifetime, 0.05);
+
+            objects.Add(obj);
+            addObject?.Invoke(this, new CControllerEventArgs(obj));
+        }
+
+        void deleteObject(int index)
+        {
+            CCollectable obj = objects[index];
+            objects.RemoveAt(index);
+            removeObject?.Invoke(this, new CControllerEventArgs(obj));
         }
 
         public void update(double deltaTime)
@@ -87,7 +111,7 @@ namespace TimedClicker
             for (int i = objects.Count - 1; i >= 0; i--)
             {
                 if (objects[i].updateLifetime(deltaTime))
-                    objects.RemoveAt(i);
+                    deleteObject(i);
             }
         }
 
@@ -101,7 +125,7 @@ namespace TimedClicker
             {
                 if (objects[i].onClick(player, this, mousePosition))
                 {
-                    objects.RemoveAt(i);
+                    deleteObject(i);
                     return true;
                 }
             }

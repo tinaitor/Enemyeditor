@@ -12,7 +12,8 @@ namespace TimedClicker
         const double Cooldown = 0.3;
 
         DispatcherTimer timer;
-        CController? controller;
+        CController controller;
+        bool started = false;
 
         public MainWindow()
         {
@@ -20,12 +21,30 @@ namespace TimedClicker
             timer = new DispatcherTimer();
             timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             timer.Tick += Timer_Tick;
+
+            controller = new CController(SpawnRate, GameTime, Cooldown);
+            // подписка на события контроллера
+            controller.addObject += Controller_AddObject;
+            controller.removeObject += Controller_RemoveObject;
+        }
+
+        // обработчик: контроллер создал объект — добавляем его спрайт на сцену
+        private void Controller_AddObject(object sender, CControllerEventArgs e)
+        {
+            GameCanvas.Children.Add(e.Object.getSprite());
+        }
+
+        // обработчик: объект пропал (кликнули или истекло время) — убираем спрайт со сцены
+        private void Controller_RemoveObject(object sender, CControllerEventArgs e)
+        {
+            GameCanvas.Children.Remove(e.Object.getSprite());
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             Size sceneSize = new Size(GameCanvas.ActualWidth, GameCanvas.ActualHeight);
-            controller = new CController(SpawnRate, SpawnRate, GameTime, Cooldown, sceneSize);
+            controller.start(sceneSize);
+            started = true;
             StartButton.IsEnabled = false;
             timer.Start();
             Draw();
@@ -33,7 +52,7 @@ namespace TimedClicker
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            if (controller == null) return;
+            if (!started) return;
 
             controller.update(0.1);
             Draw();
@@ -48,7 +67,7 @@ namespace TimedClicker
 
         private void GameCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (controller == null || !timer.IsEnabled) return;
+            if (!started || !timer.IsEnabled) return;
 
             controller.click(e.GetPosition(GameCanvas));
             Draw();
@@ -56,12 +75,8 @@ namespace TimedClicker
 
         private void Draw()
         {
-            if (controller == null) return;
-
-            GameCanvas.Children.Clear();
-            foreach (CCollectable obj in controller.getObjects())
-                GameCanvas.Children.Add(obj.getSprite());
-
+            // объекты на сцену добавляются/убираются через события,
+            // здесь обновляется только текст
             PointsText.Text = $"Очки: {controller.getPoints():F0}";
             TimeText.Text = $"Время: {controller.getTimeLeft():F1}";
 
