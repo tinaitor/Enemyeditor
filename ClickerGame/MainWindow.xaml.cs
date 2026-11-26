@@ -16,14 +16,13 @@ namespace WpfApp48
         private readonly EnemyRepository repository = new EnemyRepository();
         private readonly PlayerSaver playerSaver = new PlayerSaver();
         private readonly CController bonuses = new CController();
-        private readonly DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+        private readonly DispatcherTimer timer =
+            new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
         private readonly Stopwatch clock = Stopwatch.StartNew();
-        private readonly Random rng = new();
+        private readonly CGameController gameController;
 
         private Player player = new Player();
         private TimeSpan previousTick;
-        private IEnemy? currentEnemy;
-        private IEnemy? displayedEnemy;
 
         private string PlayerSavePath =>
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "player.json");
@@ -38,50 +37,61 @@ namespace WpfApp48
             try { player = playerSaver.Load(PlayerSavePath); }
             catch { player = new Player(); }
 
-            currentEnemy = CreateEnemyFromRandomTemplate();
+            gameController = new CGameController(repository, player);
+            gameController.EnemySpawned += OnEnemySpawned;
+            gameController.EnemyDefeated += OnEnemyDefeated;
+            gameController.EnemyChanged += OnEnemyChanged;
+
+            gameController.Start();
+
             timer.Tick += Timer_Tick;
             timer.Start();
             UpdateUI();
         }
 
-        private IEnemy? CreateEnemyFromRandomTemplate()
+        private void OnEnemySpawned(object? sender, CEnemyEventArgs e)
         {
-            var template = repository.GetRandomTemplate();
-            if (template == null) return null;
+            UpdateEnemyDisplay(e.Enemy);
+        }
 
-            int level = player.KillCount;
-            BigNumber hp = EnemyUtils.Scale(
-                BigNumber.FromLong(template.Health),
-                template.HealthModifier, level);
-            BigNumber gold = EnemyUtils.Scale(
-                BigNumber.FromLong(template.GoldReward),
-                template.GoldModifier, level);
-            BigNumber reward = BigNumber.FromLong(template.GoldReward);
-            string icon = template.Icon?.ImagePath ?? "";
+        private void OnEnemyChanged(object? sender, CEnemyEventArgs e)
+        {
+            UpdateEnemyDisplay(e.Enemy);
+        }
+
+        private void OnEnemyDefeated(object? sender, CEnemyEventArgs e)
+        {
+            Debug.WriteLine($"Побеждён: {e.Enemy.Name}");
+        }
+
+        private void UpdateEnemyDisplay(IEnemy? enemy)
+        {
+            if (enemy == null)
+            {
+                EnemyNameText.Text = "Врагов нет";
+                HealthText.Text = "HP: -";
+                EnemyImage.Source = null;
+                return;
+            }
+
+            EnemyNameText.Text = enemy.Name;
+            HealthText.Text = "Здоровье: " + enemy.Health;
+
+            string? fullPath = ResolveImagePath(enemy.ImagePath);
+            if (fullPath == null) { EnemyImage.Source = null; return; }
 
             try
             {
-                return template switch
-                {
-                    CArmoredEnemyTemplate a => EnemyFactory.Create(
-                        nameof(CArmoredEnemy),
-                        a.Name, hp, gold, reward, icon,
-                        BigNumber.FromLong((long)a.Armor)),
-
-                    CHealingEnemyTemplate h => EnemyFactory.Create(
-                        nameof(CHealingEnemy),
-                        h.Name, hp, gold, reward, icon,
-                        h.HealChance),
-
-                    _ => EnemyFactory.Create(
-                        nameof(CNormalEnemy),
-                        template.Name, hp, gold, reward, icon)
-                };
+                BitmapImage bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.UriSource = new Uri(fullPath, UriKind.Absolute);
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.EndInit();
+                EnemyImage.Source = bmp;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Не удалось создать противника: {ex.Message}");
-                return null;
+                EnemyImage.Source = null;
             }
         }
 
@@ -90,9 +100,11 @@ namespace WpfApp48
             TimeSpan now = clock.Elapsed;
             double delta = Math.Min(0.25, (now - previousTick).TotalSeconds);
             previousTick = now;
+
             player.Update(delta);
-            if (currentEnemy != null)
+            if (gameController.CurrentEnemy != null)
                 bonuses.Update(delta, new Size(BonusCanvas.ActualWidth, BonusCanvas.ActualHeight));
+
             UpdateUI();
         }
 
@@ -105,33 +117,7 @@ namespace WpfApp48
                 return;
             }
 
-            if (currentEnemy == null || !player.TryAttack()) return;
-
-            bool isDefeated = false;
-            double doubleChance = player.DoubleStrikeChance;
-
-            if (doubleChance > 0 && rng.NextDouble() < doubleChance)
-            {
-                currentEnemy.TakeDamage(player.AttackDamage);
-                isDefeated = currentEnemy.Health.CompareTo(BigNumber.Zero) == 0;
-                if (!isDefeated)
-                {
-                    currentEnemy.TakeDamage(player.AttackDamage);
-                    isDefeated = currentEnemy.Health.CompareTo(BigNumber.Zero) == 0;
-                }
-            }
-            else
-            {
-                currentEnemy.TakeDamage(player.AttackDamage);
-                isDefeated = currentEnemy.Health.CompareTo(BigNumber.Zero) == 0;
-            }
-
-            if (isDefeated)
-            {
-                player.AddGold(currentEnemy.Reward);
-                player.OnEnemyKilled();
-                currentEnemy = CreateEnemyFromRandomTemplate();
-            }
+            gameController.Attack();
             UpdateUI();
         }
 
@@ -158,22 +144,26 @@ namespace WpfApp48
         private void Window_Closing(object? sender, CancelEventArgs e)
         {
             try { playerSaver.Save(player, PlayerSavePath); }
-            catch { /* не мешаем закрытию */ }
+            catch { }
         }
 
         private void UpdateUI()
         {
             GoldText.Text = "Золото: " + player.Gold;
             DamageText.Text = "Урон: " + player.AttackDamage;
+
             CooldownText.Text = player.CanAttack
                 ? $"Атака готова (кулдаун {player.Cooldown:F2} с)"
                 : $"Перезарядка: {player.CooldownLeft:F2} с";
+
             BoostText.Text = player.DamageBoostLeft > 0
                 ? $"Усиление урона: x2 ({player.DamageBoostLeft:F1} с)"
                 : "Усиление урона: нет";
+
             CooldownBoostText.Text = player.CooldownBoostLeft > 0
                 ? $"Усиление скорости: x2 ({player.CooldownBoostLeft:F1} с)"
                 : "Усиление скорости: нет";
+
             DoubleStrikeText.Text = player.DoubleStrikeChance > 0
                 ? $"Шанс двойного клика: {player.DoubleStrikeChance * 100:F1}%"
                 : "Шанс двойного клика: 0%";
@@ -207,45 +197,31 @@ namespace WpfApp48
             foreach (CCollectable sphere in bonuses.Objects)
                 BonusCanvas.Children.Add(sphere.Sprite);
 
-            if (currentEnemy == null)
+            var enemy = gameController.CurrentEnemy;
+            if (enemy == null)
             {
-                displayedEnemy = null;
                 EnemyNameText.Text = "Врагов нет";
                 HealthText.Text = "HP: -";
-                EnemyImage.Source = null;
                 return;
             }
-
-            EnemyNameText.Text = currentEnemy.Name;
-            HealthText.Text = "Здоровье: " + currentEnemy.Health;
-            if (ReferenceEquals(displayedEnemy, currentEnemy)) return;
-            displayedEnemy = currentEnemy;
-            string? fullPath = ResolveImagePath(currentEnemy.ImagePath);
-            if (fullPath == null) { EnemyImage.Source = null; return; }
-            try
-            {
-                BitmapImage bmp = new BitmapImage();
-                bmp.BeginInit();
-                bmp.UriSource = new Uri(fullPath, UriKind.Absolute);
-                bmp.CacheOption = BitmapCacheOption.OnLoad;
-                bmp.EndInit();
-                EnemyImage.Source = bmp;
-            }
-            catch (Exception)
-            {
-                EnemyImage.Source = null;
-            }
+            HealthText.Text = "Здоровье: " + enemy.Health;
         }
 
         private static string? ResolveImagePath(string? imagePath)
         {
             if (string.IsNullOrEmpty(imagePath)) return null;
+
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            string fixedPath = imagePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+            string fixedPath = imagePath
+                .Replace('/', Path.DirectorySeparatorChar)
+                .Replace('\\', Path.DirectorySeparatorChar);
+
             string direct = Path.Combine(baseDir, fixedPath);
             if (File.Exists(direct)) return direct;
+
             string iconsDir = Path.Combine(baseDir, "icons");
             if (!Directory.Exists(iconsDir)) return null;
+
             string fileName = Path.GetFileName(fixedPath);
             return Directory.GetFiles(iconsDir, fileName, SearchOption.AllDirectories).FirstOrDefault();
         }
