@@ -13,6 +13,7 @@ namespace ClickerGame
         public event EventHandler<CEnemyEventArgs>? EnemySpawned;
         public event EventHandler<CEnemyEventArgs>? EnemyDefeated;
         public event EventHandler<CEnemyEventArgs>? EnemyChanged;
+        public event EventHandler<EnemyEventArgs> EnemyDamaged;
 
         public CGameController(EnemyRepository repository, Player player)
         {
@@ -21,13 +22,18 @@ namespace ClickerGame
         }
 
         public IEnemy? CurrentEnemy => currentEnemy;
-
+        private void OnEnemyDamageTaken(object? sender, EnemyEventArgs e)
+        {
+            
+            EnemyDamaged?.Invoke(this, e);
+        }
         public void Start()
         {
             var enemy = SpawnFromRandomTemplate();
             currentEnemy = enemy;
             if (enemy != null)
-                EnemySpawned?.Invoke(this, new CEnemyEventArgs(enemy));
+                if (enemy is CEnemy cEnemy) cEnemy.DamageTaken += OnEnemyDamageTaken;
+            EnemySpawned?.Invoke(this, new CEnemyEventArgs(enemy!));
         }
 
         public void Attack()
@@ -56,7 +62,8 @@ namespace ClickerGame
             var next = SpawnFromRandomTemplate();
             currentEnemy = next;
             if (next != null)
-                EnemyChanged?.Invoke(this, new CEnemyEventArgs(next));
+                if (next is CEnemy cNext) cNext.DamageTaken += OnEnemyDamageTaken;
+            EnemyChanged?.Invoke(this, new CEnemyEventArgs(next!));
         }
 
         private IEnemy? SpawnFromRandomTemplate()
