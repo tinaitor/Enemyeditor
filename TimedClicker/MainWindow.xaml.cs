@@ -26,6 +26,7 @@ namespace TimedClicker
             // подписка на события контроллера
             controller.addObject += Controller_AddObject;
             controller.removeObject += Controller_RemoveObject;
+            controller.removeObject += logMessage;
         }
 
         // обработчик: контроллер создал объект — добавляем его спрайт на сцену
@@ -40,9 +41,16 @@ namespace TimedClicker
             GameCanvas.Children.Remove(e.Object.getSprite());
         }
 
+        public void logMessage(object sender, CControllerEventArgs e)
+        {
+            if (e.msg != "")
+                message_log.Items.Insert(0, e.msg);
+        }
+
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             Size sceneSize = new Size(GameCanvas.ActualWidth, GameCanvas.ActualHeight);
+            message_log.Items.Clear();
             controller.start(sceneSize);
             started = true;
             StartButton.IsEnabled = false;
