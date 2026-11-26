@@ -4,6 +4,7 @@ using System.Windows;
 
 namespace ClickerGame
 {
+    // A single polymorphic collection manages every type of sphere.
     public sealed class CController
     {
         private readonly List<CCollectable> objects = new();
@@ -13,24 +14,12 @@ namespace ClickerGame
         private const double SphereLifetime = 8;
         private const double SphereDiameter = 28;
 
-
-        public event EventHandler<SphereEventArgs>? SphereAdded;
-        public event EventHandler<SphereEventArgs>? SphereRemoved;
-
         public IReadOnlyList<CCollectable> Objects => objects;
 
         public void Update(double delta, Size area)
         {
             for (int i = objects.Count - 1; i >= 0; i--)
-            {
-                if (objects[i].UpdateLifetime(delta))
-                {
-
-                    SphereRemoved?.Invoke(this, new SphereEventArgs(objects[i].Sprite));
-
-                    objects.RemoveAt(i);
-                }
-            }
+                if (objects[i].UpdateLifetime(delta)) objects.RemoveAt(i);
 
             if (area.Width < SphereDiameter || area.Height < SphereDiameter) return;
             spawnElapsed += delta;
@@ -40,17 +29,13 @@ namespace ClickerGame
             Point position = new Point(
                 random.NextDouble() * (area.Width - SphereDiameter),
                 random.NextDouble() * (area.Height - SphereDiameter));
-
             CCollectable sphere = random.Next(3) switch
             {
                 0 => new CDamageBoost(position, SphereDiameter, SphereLifetime),
                 1 => new CCooldownReducer(position, SphereDiameter, SphereLifetime),
                 _ => new CGoldBonus(position, SphereDiameter, SphereLifetime)
             };
-
             objects.Add(sphere);
-
-            SphereAdded?.Invoke(this, new SphereEventArgs(sphere.Sprite));
         }
 
         public bool TryCollect(Point position, Player player)
@@ -58,11 +43,7 @@ namespace ClickerGame
             for (int i = objects.Count - 1; i >= 0; i--)
             {
                 if (!objects[i].Contains(position)) continue;
-
                 objects[i].OnClick(player);
-
-                SphereRemoved?.Invoke(this, new SphereEventArgs(objects[i].Sprite));
-
                 objects.RemoveAt(i);
                 return true;
             }
