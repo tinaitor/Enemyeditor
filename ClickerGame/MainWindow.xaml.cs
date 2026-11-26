@@ -41,14 +41,33 @@ namespace WpfApp48
             gameController.EnemySpawned += OnEnemySpawned;
             gameController.EnemyDefeated += OnEnemyDefeated;
             gameController.EnemyChanged += OnEnemyChanged;
-
+            gameController.EnemyDamaged += OnEnemyDamagedInUI;
             gameController.Start();
+
+            bonuses.SphereAdded += OnSphereAdded;
+            bonuses.SphereRemoved += OnSphereRemoved;
 
             timer.Tick += Timer_Tick;
             timer.Start();
             UpdateUI();
         }
+        private void OnEnemyDamagedInUI(object? sender, EnemyEventArgs e)
+        {
+            
+            HealthText.Text = "Здоровье: " + e.CurrentHealth;
+        }
 
+        private void OnSphereAdded(object? sender, SphereEventArgs e)
+        {
+            
+            BonusCanvas.Children.Add(e.SphereUI);
+        }
+
+        private void OnSphereRemoved(object? sender, SphereEventArgs e)
+        {
+            
+            BonusCanvas.Children.Remove(e.SphereUI);
+        }
         private void OnEnemySpawned(object? sender, CEnemyEventArgs e)
         {
             UpdateEnemyDisplay(e.Enemy);
@@ -193,10 +212,6 @@ namespace WpfApp48
                 player.CanUpgradeCooldownSphere &&
                 player.Gold.CompareTo(player.CooldownSphereUpgradeCost) >= 0;
 
-            BonusCanvas.Children.Clear();
-            foreach (CCollectable sphere in bonuses.Objects)
-                BonusCanvas.Children.Add(sphere.Sprite);
-
             var enemy = gameController.CurrentEnemy;
             if (enemy == null)
             {
@@ -204,7 +219,6 @@ namespace WpfApp48
                 HealthText.Text = "HP: -";
                 return;
             }
-            HealthText.Text = "Здоровье: " + enemy.Health;
         }
 
         private static string? ResolveImagePath(string? imagePath)
