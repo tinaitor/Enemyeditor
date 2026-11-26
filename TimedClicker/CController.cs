@@ -86,11 +86,13 @@ namespace TimedClicker
             addObject?.Invoke(this, new CControllerEventArgs(obj));
         }
 
-        void deleteObject(int index)
+        void deleteObject(int index, string message = "")
         {
             CCollectable obj = objects[index];
             objects.RemoveAt(index);
-            removeObject?.Invoke(this, new CControllerEventArgs(obj));
+            CControllerEventArgs e = new CControllerEventArgs(obj);
+            e.msg = message;
+            removeObject?.Invoke(this, e);
         }
 
         public void update(double deltaTime)
@@ -120,12 +122,15 @@ namespace TimedClicker
             if (!player.CanClick) return false;
 
             player.startCooldown();
+            double previousPoints = points;
 
             for (int i = objects.Count - 1; i >= 0; i--)
             {
                 if (objects[i].onClick(player, this, mousePosition))
                 {
-                    deleteObject(i);
+                    double earned = points - previousPoints;
+                    string message = earned > 0 ? $"Получено очков: {earned:F2}" : "";
+                    deleteObject(i, message);
                     return true;
                 }
             }

@@ -10,6 +10,8 @@ namespace TimedClicker
     {
         public CCollectable Object { get; }
 
+        public string msg = "";
+
         public CControllerEventArgs(CCollectable obj)
         {
             Object = obj;

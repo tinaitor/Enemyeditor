@@ -11,6 +11,10 @@
            Margin="20,0,0,0" VerticalAlignment="Center"/>
         </StackPanel>
 
+        <GroupBox DockPanel.Dock="Bottom" Header="Журнал очков" Margin="0,8,0,0">
+            <ListBox x:Name="message_log" Height="84"/>
+        </GroupBox>
+
         <!-- зона, в которой появляются объекты -->
         <Border BorderBrush="Gray" BorderThickness="1">
             <Canvas x:Name="GameCanvas" Background="WhiteSmoke" ClipToBounds="True"
